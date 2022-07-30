@@ -1,7 +1,7 @@
 namespace MedFarmAPI.Entities
 {
     public class Appointment{
-        public int id { get; set; }
+        public int Id { get; set; }
         public DateTime DateTimeAppointment { get; set; }
         public bool Remote { get; set; }
         public string? VideoCallUrl { get; set; } = string.Empty;

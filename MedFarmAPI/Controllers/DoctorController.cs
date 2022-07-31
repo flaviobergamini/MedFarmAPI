@@ -1,22 +1,40 @@
 ﻿using MedFarmAPI.Data;
 using MedFarmAPI.Models;
+using MedFarmAPI.ValidateModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MedFarmAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("v1/[controller]")]
     public class DoctorController:ControllerBase 
     {
-        [HttpPost("v1/createDoctor")]
-        public async Task<IActionResult> PostAsync([FromBody] Doctor doctor, [FromServices] DataContext context)
+        [HttpPost("createDoctor")]
+        public async Task<IActionResult> PostAsync([FromBody] DoctorValidateModel doctor, [FromServices] DataContext context)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            await context.Doctors.AddAsync(doctor);
+            var model = new Doctor
+            {
+                Id = doctor.Id,
+                Name = doctor.Name,
+                Email = doctor.Email,
+                Phone = doctor.Phone,
+                Cpf = doctor.Cpf,
+                State = doctor.State,
+                City = doctor.City,
+                Complement = doctor.Complement,
+                Cep = doctor.Cep,
+                Street = doctor.Street,
+                StreetNumber = doctor.StreetNumber,
+                Specialty = doctor.Specialty,
+                RegionalCouncil = doctor.RegionalCouncil,
+            };
+
+            await context.Doctors.AddAsync(model);
             await context.SaveChangesAsync();
-            return Created($"v1/createDoctor/{doctor.Id}", doctor);
+            return Created($"v1/createDoctor/{model.Id}", model);
         }
     }
 }

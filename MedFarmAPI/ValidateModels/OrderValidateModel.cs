@@ -1,4 +1,5 @@
 ﻿using MedFarmAPI.BaseModels;
+using System.ComponentModel.DataAnnotations;
 
 namespace MedFarmAPI.ValidateModels
 {

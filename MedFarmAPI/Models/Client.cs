@@ -1,10 +1,11 @@
-using MedFarmAPI.Model;
+using MedFarmAPI.BaseModels;
+using System.ComponentModel.DataAnnotations;
 
-namespace MedFarmAPI.Entities
+namespace MedFarmAPI.Models
 {
     public class Client:UserEntity
     {
-        public string Cpf { get; set; } = string.Empty!;
+        [Required] public string Cpf { get; set; } = null!;
         public IList<Appointment> Appointments { get; set; } = new List<Appointment>();
         public IList<Order> Orders { get; set; } = new List<Order>();
     }

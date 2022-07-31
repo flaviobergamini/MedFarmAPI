@@ -110,3 +110,13 @@ GO
 COMMIT;
 GO
 
+BEGIN TRANSACTION;
+GO
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20220731174753_modifyDatabase', N'6.0.7');
+GO
+
+COMMIT;
+GO
+

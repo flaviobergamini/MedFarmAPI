@@ -1,4 +1,4 @@
-﻿using MedFarmAPI.Entities;
+﻿using MedFarmAPI.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

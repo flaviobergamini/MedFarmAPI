@@ -1,5 +1,5 @@
 using MedFarmAPI.Data.Mappings;
-using MedFarmAPI.Entities;
+using MedFarmAPI.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace MedFarmAPI.Data{

@@ -14,15 +14,15 @@ namespace MedFarmAPI.Controllers
         public async Task<IActionResult> PostAsync([FromBody] OrderValidateModel order, [FromServices] DataContext context)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest("MFAPI4004 - Pedido inválido");
 
             Client? client = await context.Clients.FirstOrDefaultAsync(x => x.Id == order.ClientId);
             if (client == null)
-                return BadRequest();
+                return NotFound("MFAPI4042 - Cliente não encontrado no Banco de Dados, ID inválido");
 
             Drugstore? drugstore = await context.Drugstores.FirstOrDefaultAsync(x => x.Id == order.DrugstoresId);
             if (drugstore == null)
-                return BadRequest();
+                return NotFound("MFAPI4043 - Farmácia não encontrada no Banco de Dados, ID inválido");
 
             var model = new Order
             {
@@ -37,9 +37,16 @@ namespace MedFarmAPI.Controllers
                 Drugstores = drugstore
             };
 
-            await context.Orders.AddAsync(model);
-            await context.SaveChangesAsync();
-            return Created($"v1/create-order/{order.ClientId}", order);
+            try
+            {
+                await context.Orders.AddAsync(model);
+                await context.SaveChangesAsync();
+                return Created($"v1/create-order/{order.ClientId}", order);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "MFAPI5004 - Erro interno no servidor ao cadastrar pedido");
+            }
         }
     }
 }

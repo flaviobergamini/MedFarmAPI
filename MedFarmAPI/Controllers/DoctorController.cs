@@ -13,7 +13,7 @@ namespace MedFarmAPI.Controllers
         public async Task<IActionResult> PostAsync([FromBody] DoctorValidateModel doctor, [FromServices] DataContext context)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest("MFAPI4001 - Médico inválido");
 
             var model = new Doctor
             {
@@ -30,10 +30,15 @@ namespace MedFarmAPI.Controllers
                 Specialty = doctor.Specialty,
                 RegionalCouncil = doctor.RegionalCouncil,
             };
-
-            await context.Doctors.AddAsync(model);
-            await context.SaveChangesAsync();
-            return Created($"v1/create-doctor/{model.Id}", model);
+            try { 
+                await context.Doctors.AddAsync(model);
+                await context.SaveChangesAsync();
+                return Created($"v1/create-doctor/{model.Id}", model);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "MFAPI5002 - Erro interno no servidor ao cadastrar médico");
+            }
         }
     }
 }

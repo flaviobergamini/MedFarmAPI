@@ -10,7 +10,7 @@ namespace MedFarmAPI.Controllers
         public IActionResult Get()
         {
 
-            return Ok("MedFarmAPI 2022");
+            return Ok("MFAPI2000 - MedFarmAPI 2022 Ok");
         }
     }
 }

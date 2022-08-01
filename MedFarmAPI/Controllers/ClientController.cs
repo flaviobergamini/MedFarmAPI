@@ -14,7 +14,7 @@ namespace MedFarmAPI.Controllers
         public async Task<IActionResult> PostAsync([FromBody] ClientValidateModel client, [FromServices] DataContext context)
         {
             if(!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest("MFAPI4000 - Cliente inválido");
 
             var model = new Client
             {
@@ -29,10 +29,16 @@ namespace MedFarmAPI.Controllers
                 Street = client.Street,
                 StreetNumber = client.StreetNumber
             };
-
-            await context.Clients.AddAsync(model);
-            await context.SaveChangesAsync();
-            return Created($"v1/create-client/{model.Id}", model);
+            try
+            {
+                await context.Clients.AddAsync(model);
+                await context.SaveChangesAsync();
+                return Created($"v1/create-client/{model.Id}", model);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "MFAPI5001 - Erro interno no servidor ao cadastrar cliente");
+            }
         }
 
         [HttpGet("clients")]
@@ -49,7 +55,7 @@ namespace MedFarmAPI.Controllers
             }
             catch
             {
-                return StatusCode(500, "05XE14 - Falha interna do servidor");
+                return StatusCode(500, "MFAPI5002 - Erro interno no servidor ao buscar cliente");
             }
         }
     }

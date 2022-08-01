@@ -14,15 +14,15 @@ namespace MedFarmAPI.Controllers
         public async Task<IActionResult> PostAsync([FromBody] AppointmentValidateModel appointment, [FromServices] DataContext context)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest("MFAPI4003 - Consulta inválida");
 
             Client? client = await context.Clients.FirstOrDefaultAsync(x => x.Id == appointment.ClientId);
             if(client == null)
-                return BadRequest();
+                return NotFound("MFAPI4040 - Cliente não encontrado no Banco de Dados, ID inválido");
 
             Doctor? doctor = await context.Doctors.FirstOrDefaultAsync(x => x.Id == appointment.DoctorId);
             if (doctor == null)
-                return BadRequest();
+                return NotFound("MFAPI4041 - Médico não encontrado no Banco de Dados, ID inválido");
 
             var model = new Appointment
             {
@@ -32,10 +32,15 @@ namespace MedFarmAPI.Controllers
                 Client = client,
                 Doctor = doctor
             };
-
-            await context.Appointments.AddAsync(model);
-            await context.SaveChangesAsync();
-            return Created($"v1/create-appointment/{model.Id}", model);
+            try
+            {
+                await context.Appointments.AddAsync(model);
+                await context.SaveChangesAsync();
+                return Created($"v1/create-appointment/{model.Id}", model);
+            }
+            catch (Exception ex) {
+                return StatusCode(500, "MFAPI5000 - Erro interno no servidor ao salvar consulta");
+            }
         }
     }
 }

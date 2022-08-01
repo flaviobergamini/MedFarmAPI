@@ -17,7 +17,6 @@ namespace MedFarmAPI.Controllers
 
             var model = new Drugstore
             {
-                Id = drugstore.Id,
                 Name = drugstore.Name,
                 Email = drugstore.Email,
                 Phone = drugstore.Phone,

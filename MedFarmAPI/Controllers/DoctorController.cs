@@ -17,7 +17,6 @@ namespace MedFarmAPI.Controllers
 
             var model = new Doctor
             {
-                Id = doctor.Id,
                 Name = doctor.Name,
                 Email = doctor.Email,
                 Phone = doctor.Phone,

@@ -26,7 +26,6 @@ namespace MedFarmAPI.Controllers
 
             var model = new Order
             {
-                Id = order.Id,
                 Image = order.Image,
                 State = order.State,
                 City = order.City,
@@ -40,7 +39,7 @@ namespace MedFarmAPI.Controllers
 
             await context.Orders.AddAsync(model);
             await context.SaveChangesAsync();
-            return Created($"v1/create-order/{order.Id}", order);
+            return Created($"v1/create-order/{order.ClientId}", order);
         }
     }
 }

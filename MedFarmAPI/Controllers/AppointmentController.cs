@@ -26,7 +26,6 @@ namespace MedFarmAPI.Controllers
 
             var model = new Appointment
             {
-                Id = appointment.Id,
                 DateTimeAppointment = appointment.DateTimeAppointment,
                 Remote = appointment.Remote,
                 VideoCallUrl = appointment.VideoCallUrl,

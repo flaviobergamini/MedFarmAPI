@@ -27,7 +27,7 @@ namespace MedFarmAPI.Data.Mappings
             .IsRequired()
             .HasColumnName("Cnpj")
             .HasColumnType("NVARCHAR")
-            .HasMaxLength(14);
+            .HasMaxLength(18);
 
             builder.Property(x => x.Email)
             .IsRequired()

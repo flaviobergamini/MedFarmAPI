@@ -28,7 +28,6 @@ namespace MedFarmAPI.Data.Mappings
             .HasColumnType("BIT");
 
             builder.Property(x => x.VideoCallUrl)
-            .IsRequired()
             .HasColumnName("VideoCallUrl")
             .HasColumnType("TEXT");
 

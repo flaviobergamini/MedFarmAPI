@@ -5,11 +5,11 @@ using Microsoft.EntityFrameworkCore;
 namespace MedFarmAPI.Data{
     public class DataContext:DbContext
     {
-        public DbSet<Client> Clients => Set<Client>();
-        public DbSet<Doctor> Doctors => Set<Doctor>();
-        public DbSet<Drugstore> Drugstores => Set<Drugstore>();
-        public DbSet<Appointment> Appointments => Set<Appointment>();
-        public DbSet<Order> Orders => Set<Order>();
+        public DbSet<Client>? Clients { get; set; }
+        public DbSet<Doctor>? Doctors { get; set; }
+        public DbSet<Drugstore>? Drugstores { get; set; }
+        public DbSet<Appointment>? Appointments { get; set; }
+        public DbSet<Order>? Orders { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {

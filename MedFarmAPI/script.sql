@@ -120,3 +120,32 @@ GO
 COMMIT;
 GO
 
+BEGIN TRANSACTION;
+GO
+
+DECLARE @var0 sysname;
+SELECT @var0 = [d].[name]
+FROM [sys].[default_constraints] [d]
+INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
+WHERE ([d].[parent_object_id] = OBJECT_ID(N'[Appointment]') AND [c].[name] = N'VideoCallUrl');
+IF @var0 IS NOT NULL EXEC(N'ALTER TABLE [Appointment] DROP CONSTRAINT [' + @var0 + '];');
+ALTER TABLE [Appointment] ALTER COLUMN [VideoCallUrl] TEXT NULL;
+GO
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20220731193530_AppointmentVideoCallUrlIsNull', N'6.0.7');
+GO
+
+COMMIT;
+GO
+
+BEGIN TRANSACTION;
+GO
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20220731202651_CreateDatabaseAgain', N'6.0.7');
+GO
+
+COMMIT;
+GO
+

@@ -2,12 +2,13 @@
 using MedFarmAPI.Models;
 using MedFarmAPI.ValidateModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace MedFarmAPI.Controllers
 {
     [ApiController]
     [Route("v1/[controller]")]
-    public class ClientController : ControllerBase 
+    public class ClientController : ControllerBase
     {
         [HttpPost("createClient")]
         public async Task<IActionResult> PostAsync([FromBody] ClientValidateModel client, [FromServices] DataContext context)
@@ -17,7 +18,6 @@ namespace MedFarmAPI.Controllers
 
             var model = new Client
             {
-                Id = client.Id,
                 Name = client.Name,
                 Email = client.Email,
                 Phone = client.Phone,
@@ -33,6 +33,24 @@ namespace MedFarmAPI.Controllers
             await context.Clients.AddAsync(model);
             await context.SaveChangesAsync();
             return Created($"v1/createClient/{model.Id}", model);
+        }
+
+        [HttpGet("createClient")]
+        public async Task<IActionResult> GetAsync([FromServices] DataContext context)
+        {
+            try
+            {
+                var categories = await context.Clients.ToListAsync();
+
+                if (categories == null)
+                    return NotFound();
+
+                return Ok();
+            }
+            catch
+            {
+                return StatusCode(500, "05XE14 - Falha interna do servidor");
+            }
         }
     }
 }

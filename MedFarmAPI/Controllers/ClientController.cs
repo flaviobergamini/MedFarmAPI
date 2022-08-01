@@ -10,7 +10,7 @@ namespace MedFarmAPI.Controllers
     [Route("v1/[controller]")]
     public class ClientController : ControllerBase
     {
-        [HttpPost("createClient")]
+        [HttpPost("create-client")]
         public async Task<IActionResult> PostAsync([FromBody] ClientValidateModel client, [FromServices] DataContext context)
         {
             if(!ModelState.IsValid)
@@ -32,20 +32,20 @@ namespace MedFarmAPI.Controllers
 
             await context.Clients.AddAsync(model);
             await context.SaveChangesAsync();
-            return Created($"v1/createClient/{model.Id}", model);
+            return Created($"v1/create-client/{model.Id}", model);
         }
 
-        [HttpGet("createClient")]
+        [HttpGet("clients")]
         public async Task<IActionResult> GetAsync([FromServices] DataContext context)
         {
             try
             {
-                var categories = await context.Clients.ToListAsync();
+                var clients = await context.Clients.ToListAsync();
 
-                if (categories == null)
+                if (clients == null)
                     return NotFound();
 
-                return Ok();
+                return Ok(clients);
             }
             catch
             {

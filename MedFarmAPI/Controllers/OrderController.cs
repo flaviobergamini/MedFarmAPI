@@ -10,17 +10,17 @@ namespace MedFarmAPI.Controllers
     [Route("v1/[controller]")]
     public class OrderController:ControllerBase
     {
-        [HttpPost("createOrder")]
+        [HttpPost("create-order")]
         public async Task<IActionResult> PostAsync([FromBody] OrderValidateModel order, [FromServices] DataContext context)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var client = await context.Clients.FirstOrDefaultAsync(x => x.Id == order.ClientId);
+            Client? client = await context.Clients.FirstOrDefaultAsync(x => x.Id == order.ClientId);
             if (client == null)
                 return BadRequest();
 
-            var drugstore = await context.Drugstores.FirstOrDefaultAsync(x => x.Id == order.DrugstoresId);
+            Drugstore? drugstore = await context.Drugstores.FirstOrDefaultAsync(x => x.Id == order.DrugstoresId);
             if (drugstore == null)
                 return BadRequest();
 
@@ -40,7 +40,7 @@ namespace MedFarmAPI.Controllers
 
             await context.Orders.AddAsync(model);
             await context.SaveChangesAsync();
-            return Created($"v1/createOrder/{model.Id}", model);
+            return Created($"v1/create-order/{order.Id}", order);
         }
     }
 }

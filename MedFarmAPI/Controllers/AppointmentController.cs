@@ -10,17 +10,17 @@ namespace MedFarmAPI.Controllers
     [Route("v1/[controller]")]
     public class AppointmentController:ControllerBase
     {
-        [HttpPost("createAppointment")]
+        [HttpPost("create-appointment")]
         public async Task<IActionResult> PostAsync([FromBody] AppointmentValidateModel appointment, [FromServices] DataContext context)
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
 
-            var client = await context.Clients.FirstOrDefaultAsync(x => x.Id == appointment.ClientId);
+            Client? client = await context.Clients.FirstOrDefaultAsync(x => x.Id == appointment.ClientId);
             if(client == null)
                 return BadRequest();
 
-            var doctor = await context.Doctors.FirstOrDefaultAsync(x => x.Id == appointment.DoctorId);
+            Doctor? doctor = await context.Doctors.FirstOrDefaultAsync(x => x.Id == appointment.DoctorId);
             if (doctor == null)
                 return BadRequest();
 
@@ -36,7 +36,7 @@ namespace MedFarmAPI.Controllers
 
             await context.Appointments.AddAsync(model);
             await context.SaveChangesAsync();
-            return Created($"v1/createAppointment/{model.Id}", model);
+            return Created($"v1/create-appointment/{model.Id}", model);
         }
     }
 }

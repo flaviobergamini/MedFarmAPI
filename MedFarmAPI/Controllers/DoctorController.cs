@@ -9,7 +9,7 @@ namespace MedFarmAPI.Controllers
     [Route("v1/[controller]")]
     public class DoctorController:ControllerBase 
     {
-        [HttpPost("createDoctor")]
+        [HttpPost("create-doctor")]
         public async Task<IActionResult> PostAsync([FromBody] DoctorValidateModel doctor, [FromServices] DataContext context)
         {
             if (!ModelState.IsValid)
@@ -34,7 +34,7 @@ namespace MedFarmAPI.Controllers
 
             await context.Doctors.AddAsync(model);
             await context.SaveChangesAsync();
-            return Created($"v1/createDoctor/{model.Id}", model);
+            return Created($"v1/create-doctor/{model.Id}", model);
         }
     }
 }

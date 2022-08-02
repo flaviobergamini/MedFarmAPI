@@ -1,10 +1,12 @@
 using MedFarmAPI.Data;
+using MedFarmAPI.Services;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddRazorPages();
 builder.Services.AddDbContext<DataContext>();
+builder.Services.AddTransient<TokenService>();
 
 builder.Services.AddControllers().ConfigureApiBehaviorOptions(options => {
     options.SuppressModelStateInvalidFilter = true; 

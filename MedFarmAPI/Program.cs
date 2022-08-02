@@ -1,10 +1,33 @@
+using MedFarmAPI;
 using MedFarmAPI.Data;
 using MedFarmAPI.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configurando Autenticação na API
+var key = Encoding.ASCII.GetBytes(ConfigurationJWT.JwtKey);
+builder.Services.AddAuthentication(x =>
+{
+    x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    x.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(x => 
+{
+    x.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        IssuerSigningKey = new SymmetricSecurityKey(key),
+        ValidateIssuer = false,
+        ValidateAudience = false,
+    
+    };
+});
+
 builder.Services.AddRazorPages();
+// Injeção de dependencia
 builder.Services.AddDbContext<DataContext>();
 builder.Services.AddTransient<TokenService>();
 
@@ -28,6 +51,8 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 
+//Habilitando a autenticação e a autorização para login
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

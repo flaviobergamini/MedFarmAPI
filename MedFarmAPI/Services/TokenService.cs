@@ -32,15 +32,5 @@ namespace MedFarmAPI.Services
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
-
-        public string GenerateToken(Doctor doctor)
-        {
-            return "";
-        }
-
-        public string GenerateToken(Drugstore drugstore)
-        {
-            return "";
-        }
     }
 }

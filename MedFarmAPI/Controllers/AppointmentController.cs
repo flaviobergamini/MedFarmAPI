@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace MedFarmAPI.Controllers
 {
     [ApiController]
-    [Route("v1/[controller]")]
+    [Route("v1/appointment")]
     public class AppointmentController:ControllerBase
     {
         [HttpPost("create-appointment")]
@@ -16,11 +16,11 @@ namespace MedFarmAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest("MFAPI4003 - Consulta inválida");
 
-            Client? client = await context.Clients.FirstOrDefaultAsync(x => x.Id == appointment.ClientId);
+            Client? client = await context.Clients.AsNoTracking().FirstOrDefaultAsync(x => x.Id == appointment.ClientId);
             if(client == null)
                 return NotFound("MFAPI4040 - Cliente não encontrado no Banco de Dados, ID inválido");
 
-            Doctor? doctor = await context.Doctors.FirstOrDefaultAsync(x => x.Id == appointment.DoctorId);
+            Doctor? doctor = await context.Doctors.AsNoTracking().FirstOrDefaultAsync(x => x.Id == appointment.DoctorId);
             if (doctor == null)
                 return NotFound("MFAPI4041 - Médico não encontrado no Banco de Dados, ID inválido");
 

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace MedFarmAPI.Controllers
 {
     [ApiController]
-    [Route("v1/[controller]")]
+    [Route("v1/order")]
     public class OrderController:ControllerBase
     {
         [HttpPost("create-order")]
@@ -16,11 +16,11 @@ namespace MedFarmAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest("MFAPI4004 - Pedido inválido");
 
-            Client? client = await context.Clients.FirstOrDefaultAsync(x => x.Id == order.ClientId);
+            Client? client = await context.Clients.AsNoTracking().FirstOrDefaultAsync(x => x.Id == order.ClientId);
             if (client == null)
                 return NotFound("MFAPI4042 - Cliente não encontrado no Banco de Dados, ID inválido");
 
-            Drugstore? drugstore = await context.Drugstores.FirstOrDefaultAsync(x => x.Id == order.DrugstoresId);
+            Drugstore? drugstore = await context.Drugstores.AsNoTracking().FirstOrDefaultAsync(x => x.Id == order.DrugstoresId);
             if (drugstore == null)
                 return NotFound("MFAPI4043 - Farmácia não encontrada no Banco de Dados, ID inválido");
 

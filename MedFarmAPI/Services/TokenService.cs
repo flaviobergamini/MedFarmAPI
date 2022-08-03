@@ -1,4 +1,5 @@
-﻿using MedFarmAPI.Models;
+﻿using MedFarmAPI.Interfaces;
+using MedFarmAPI.Models;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -8,7 +9,7 @@ namespace MedFarmAPI.Services
 {
     public class TokenService
     {
-        public string GenerateToken(Client client)
+        public string GenerateToken(IUsers user)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
 
@@ -17,10 +18,10 @@ namespace MedFarmAPI.Services
             var tokenDescriptor = new SecurityTokenDescriptor 
             {
                 Subject = new ClaimsIdentity(new Claim[] { 
-                    new Claim(ClaimTypes.Name, client.Name),
-                    new Claim(ClaimTypes.Email, client.Email),
-                    new Claim(ClaimTypes.Role, "Client"),
-                    new Claim("id", client.Id.ToString()),
+                    new Claim(ClaimTypes.Name, user.Name),
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(ClaimTypes.Role, user.Roles),
+                    new Claim("id", user.Id.ToString()),
                 }),
 
                 Expires = DateTime.UtcNow.AddHours(8),

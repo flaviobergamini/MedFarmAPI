@@ -11,5 +11,7 @@ namespace MedFarmAPI.ValidateModels
         [Required] public string Cpf { get; set; } = null!;
         [Required] public string Specialty { get; set; } = null!;
         [Required] public string RegionalCouncil { get; set; } = null!;
+        [Required] public string Password { get; set; } = null!;
+        [Required] public string Roles { get; set; } = null!;
     }
 }

@@ -3,7 +3,7 @@
 namespace MedFarmAPI.Controllers
 {
     [ApiController]
-    [Route("")]
+    [Route("v1")]
     public class HomeController:ControllerBase
     {
         [HttpGet("")]

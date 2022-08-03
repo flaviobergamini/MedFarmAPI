@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace MedFarmAPI.Controllers
 {
     [ApiController]
-    [Route("v1/[controller]")]
+    [Route("v1/drugstore")]
     public class DrugstoreController:ControllerBase
     {
         [HttpPost("create-drugstore")]

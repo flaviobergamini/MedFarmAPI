@@ -1,4 +1,5 @@
 using MedFarmAPI.BaseModels;
+using MedFarmAPI.Interfaces;
 
 namespace MedFarmAPI.Models
 {

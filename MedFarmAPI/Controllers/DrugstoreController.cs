@@ -2,6 +2,7 @@
 using MedFarmAPI.Models;
 using MedFarmAPI.ValidateModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace MedFarmAPI.Controllers
 {
@@ -9,34 +10,21 @@ namespace MedFarmAPI.Controllers
     [Route("v1/drugstore")]
     public class DrugstoreController:ControllerBase
     {
-        [HttpPost("create-drugstore")]
-        public async Task<IActionResult> PostAsync([FromBody] DrugstoreValidateModel drugstore, [FromServices] DataContext context)
+        [HttpGet("drugstore")]
+        public async Task<IActionResult> GetAsync([FromServices] DataContext context)
         {
-            if (!ModelState.IsValid)
-                return BadRequest("MFAPI4002 - Farmácia inválida");
-
-            var model = new Drugstore
-            {
-                Name = drugstore.Name,
-                Email = drugstore.Email,
-                Phone = drugstore.Phone,
-                Cnpj = drugstore.Cnpj,
-                State = drugstore.State,
-                City = drugstore.City,
-                Complement = drugstore.Complement,
-                Cep = drugstore.Cep,
-                Street = drugstore.Street,
-                StreetNumber = drugstore.StreetNumber
-            };
             try
             {
-                await context.Drugstores.AddAsync(model);
-                await context.SaveChangesAsync();
-                return Created($"v1/create-drugstore/{model.Id}", model);
+                var drugstore = await context.Drugstores.ToListAsync();
+
+                if (drugstore == null)
+                    return NotFound();
+
+                return Ok(drugstore);
             }
-            catch (Exception ex)
+            catch
             {
-                return StatusCode(500, "MFAPI5003 - Erro interno no servidor ao cadastrar farmácia");
+                return StatusCode(500, "MFAPI5002 - Erro interno no servidor ao buscar cliente");
             }
         }
     }

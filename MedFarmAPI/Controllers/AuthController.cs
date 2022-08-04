@@ -17,7 +17,8 @@ namespace MedFarmAPI.Controllers
     {
         [HttpPost("create-client")]
         public async Task<IActionResult> PostClientAsync(
-            [FromBody] ClientValidateModel client, 
+            [FromBody] ClientValidateModel client,
+            [FromServices] EmailService emailService,
             [FromServices] DataContext context,
             CancellationToken cancellationToken)
         {
@@ -41,9 +42,27 @@ namespace MedFarmAPI.Controllers
             };
             try
             {
-                await context.Clients.AddAsync(model);
-                await context.SaveChangesAsync();
-                return Created($"v1/create-client/{model.Id}", model);
+                var confirmEmail = emailService.Send(
+                    model.Name,
+                    model.Email,
+                    "Bem vindo ao Med Farm!!!",
+                    "<div style='background:lightgray'>" +
+                    "<h1 style='text-align:center; font-size:15pt'> Seja bem vindo ao Med Farm</h1>" +
+                    "<h2 style='text-align:center; font-size:10pt'>Conta criada com sucesso</h2>" +
+                    "</div>"
+
+                    );
+
+                if (confirmEmail)
+                {
+                    await context.Clients.AddAsync(model);
+                    await context.SaveChangesAsync();
+                    return Created($"v1/create-client/{model.Id}", model);
+                }
+                else
+                {
+                    return StatusCode(404, "MFAPI4041 - E-mail inválido");
+                }
             }
             catch (Exception ex)
             {

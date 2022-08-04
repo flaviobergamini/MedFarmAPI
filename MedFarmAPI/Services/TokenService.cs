@@ -13,7 +13,7 @@ namespace MedFarmAPI.Services
         {
             var tokenHandler = new JwtSecurityTokenHandler();
 
-            var key = Encoding.ASCII.GetBytes(ConfigurationJWT.JwtKey);
+            var key = Encoding.ASCII.GetBytes(Configuration.JwtKey);
 
             var tokenDescriptor = new SecurityTokenDescriptor 
             {

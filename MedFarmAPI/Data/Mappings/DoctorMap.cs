@@ -48,6 +48,7 @@ namespace MedFarmAPI.Data.Mappings
             .HasMaxLength(45);
 
             builder.Property(x => x.Complement)
+            .IsRequired(false)
             .HasColumnName("Complement")
             .HasColumnType("NVARCHAR")
             .HasMaxLength(300);
@@ -86,6 +87,18 @@ namespace MedFarmAPI.Data.Mappings
             .HasColumnName("RegionalCouncil")
             .HasColumnType("NVARCHAR")
             .HasMaxLength(30);
+
+            builder.Property(x => x.Password)
+            .IsRequired()
+            .HasColumnName("PasswordHash")
+            .HasColumnType("NVARCHAR")
+            .HasMaxLength(1000);
+
+            builder.Property(x => x.Roles)
+            .IsRequired()
+            .HasColumnName("Roles")
+            .HasColumnType("NVARCHAR")
+            .HasMaxLength(20);
         }
     }
 }

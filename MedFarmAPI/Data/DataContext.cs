@@ -13,7 +13,7 @@ namespace MedFarmAPI.Data{
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            options.UseSqlServer("Server=localhost,1433;Database=MedFarm;User ID=sa;Password=/MS-DOSV.6.22b");
+            options.UseSqlServer("Server=FLµVIO\\SQLEXPRESS;Database=MedFarm;User ID=sa;Password=/MS-DOSV.6.22b");
             //options.LogTo(Console.WriteLine);
         }
 

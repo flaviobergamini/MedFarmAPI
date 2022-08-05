@@ -42,5 +42,23 @@ namespace MedFarmAPI.Controllers
                 return StatusCode(500, "MFAPI5000 - Erro interno no servidor ao salvar consulta");
             }
         }
+
+        [HttpGet("appointment")]
+        public async Task<IActionResult> GetAsync([FromServices] DataContext context)
+        {
+            try
+            {
+                var appointments = await context.Appointments.AsNoTracking().ToListAsync();
+
+                if (appointments == null)
+                    return NotFound();
+
+                return Ok(appointments);
+            }
+            catch
+            {
+                return StatusCode(500, "MFAPI5002 - Erro interno no servidor ao buscar cliente");
+            }
+        }
     }
 }

@@ -2,6 +2,7 @@
 using MedFarmAPI.Models;
 using MedFarmAPI.ValidateModels;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace MedFarmAPI.Controllers
 {
@@ -9,35 +10,21 @@ namespace MedFarmAPI.Controllers
     [Route("v1/[controller]")]
     public class DoctorController:ControllerBase 
     {
-        [HttpPost("create-doctor")]
-        public async Task<IActionResult> PostAsync([FromBody] DoctorValidateModel doctor, [FromServices] DataContext context)
+        [HttpGet("doctor")]
+        public async Task<IActionResult> GetAsync([FromServices] DataContext context)
         {
-            if (!ModelState.IsValid)
-                return BadRequest("MFAPI4001 - Médico inválido");
+            try
+            {
+                var doctor = await context.Doctors.AsNoTracking().ToListAsync();
 
-            var model = new Doctor
-            {
-                Name = doctor.Name,
-                Email = doctor.Email,
-                Phone = doctor.Phone,
-                Cpf = doctor.Cpf,
-                State = doctor.State,
-                City = doctor.City,
-                Complement = doctor.Complement,
-                Cep = doctor.Cep,
-                Street = doctor.Street,
-                StreetNumber = doctor.StreetNumber,
-                Specialty = doctor.Specialty,
-                RegionalCouncil = doctor.RegionalCouncil,
-            };
-            try { 
-                await context.Doctors.AddAsync(model);
-                await context.SaveChangesAsync();
-                return Created($"v1/create-doctor/{model.Id}", model);
+                if (doctor == null)
+                    return NotFound();
+
+                return Ok(doctor);
             }
-            catch (Exception ex)
+            catch
             {
-                return StatusCode(500, "MFAPI5002 - Erro interno no servidor ao cadastrar médico");
+                return StatusCode(500, "MFAPI5002 - Erro interno no servidor ao buscar cliente");
             }
         }
     }

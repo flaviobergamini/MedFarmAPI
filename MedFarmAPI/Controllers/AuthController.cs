@@ -17,6 +17,7 @@ namespace MedFarmAPI.Controllers
         public async Task<IActionResult> PostClientAsync(
             [FromBody] ClientValidateModel client,
             [FromServices] EmailService emailService,
+            [FromServices] ViewBodyService viewBodyService,
             [FromServices] DataContext context,
             CancellationToken cancellationToken)
         {
@@ -44,11 +45,7 @@ namespace MedFarmAPI.Controllers
                     model.Name,
                     model.Email,
                     "Bem vindo ao Med Farm!!!",
-                    "<div style='background:lightgray'>" +
-                    "<h1 style='text-align:center; font-size:15pt'> Seja bem vindo ao Med Farm</h1>" +
-                    "<h2 style='text-align:center; font-size:10pt'>Conta criada com sucesso</h2>" +
-                    "</div>"
-
+                    viewBodyService.BodyEmailClient(model.Name)
                     ); 
                
                 if (confirmEmail)
@@ -74,7 +71,9 @@ namespace MedFarmAPI.Controllers
 
         [HttpPost("create-doctor")]
         public async Task<IActionResult> PostDoctorAsync(
-            [FromBody] DoctorValidateModel doctor, 
+            [FromBody] DoctorValidateModel doctor,
+            [FromServices] EmailService emailService,
+            [FromServices] ViewBodyService viewBodyService,
             [FromServices] DataContext context,
             CancellationToken cancellationToken)
         {
@@ -98,11 +97,30 @@ namespace MedFarmAPI.Controllers
                 Specialty = doctor.Specialty,
                 RegionalCouncil = doctor.RegionalCouncil
             };
+
             try
             {
-                await context.Doctors.AddAsync(model);
-                await context.SaveChangesAsync();
-                return Created($"v1/create-doctor/{model.Id}", model);
+                var confirmEmail = emailService.Send(
+                    model.Name,
+                    model.Email,
+                    "Bem vindo ao Med Farm!!!",
+                    viewBodyService.BodyEmailDoctor(model.Name)
+                    );
+
+                if (confirmEmail)
+                {
+                    await context.Doctors.AddAsync(model);
+                    await context.SaveChangesAsync();
+                    return Created($"v1/create-doctor/{model.Id}", model);
+                }
+                else
+                {
+                    return StatusCode(404, "MFAPI4041 - E-mail inválido");
+                }
+            }
+            catch (DbUpdateException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
@@ -112,7 +130,9 @@ namespace MedFarmAPI.Controllers
 
         [HttpPost("create-drugstore")]
         public async Task<IActionResult> PostDrugstoreAsync(
-            [FromBody] DrugstoreValidateModel drugstore, 
+            [FromBody] DrugstoreValidateModel drugstore,
+            [FromServices] EmailService emailService,
+            [FromServices] ViewBodyService viewBodyService,
             [FromServices] DataContext context, 
             CancellationToken cancellationToken)
         {
@@ -136,9 +156,27 @@ namespace MedFarmAPI.Controllers
             };
             try
             {
-                await context.Drugstores.AddAsync(model);
-                await context.SaveChangesAsync();
-                return Created($"v1/create-drugstore/{model.Id}", model);
+                var confirmEmail = emailService.Send(
+                    model.Name,
+                    model.Email,
+                    "Bem vindo ao Med Farm!!!",
+                    viewBodyService.BodyEmailDrugstore(model.Name)
+                    );
+
+                if (confirmEmail)
+                {
+                    await context.Drugstores.AddAsync(model);
+                    await context.SaveChangesAsync();
+                    return Created($"v1/create-drugstore/{model.Id}", model);
+                }
+                else
+                {
+                    return StatusCode(404, "MFAPI4041 - E-mail inválido");
+                }
+            }
+            catch (DbUpdateException ex)
+            {
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {

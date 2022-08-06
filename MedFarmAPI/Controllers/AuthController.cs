@@ -1,5 +1,6 @@
 ﻿using MedFarmAPI.Data;
 using MedFarmAPI.Models;
+using MedFarmAPI.Services;
 using MedFarmAPI.ValidateModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -145,48 +146,84 @@ namespace MedFarmAPI.Controllers
             }
         }
 
-        /*
 
-        [HttpPost("login")]
-        public async Task<IActionResult> LoginAsync(
+        [HttpPost("login-client")]
+        public async Task<IActionResult> LoginClientAsync(
             [FromBody] LoginValidateModel loginValidateModel, 
             [FromServices] DataContext context, 
             [FromServices] TokenService tokenService,
             CancellationToken cancellationToken)
         {
-            string roles = loginValidateModel.Roles;
-            IUsers? user = null;
-            if (roles == "Client")
-            {
-                user = await context.Clients.AsNoTracking().FirstOrDefaultAsync(x => x.Email == loginValidateModel.Email);
-            }
-            else if (roles == "Doctor")
-            {
-                user = await context.Doctors.AsNoTracking().FirstOrDefaultAsync(x => x.Email == loginValidateModel.Email);
-            }
-            else if (roles == "Drugstore")
-            {
-                user = await context.Drugstores.AsNoTracking().FirstOrDefaultAsync(x => x.Email == loginValidateModel.Email);
-            }
-            else
-            {
-                return StatusCode(401, "MFAPI4010 - Role inválido");
-            }
+ 
+            Client? user = await context.Clients.AsNoTracking().FirstOrDefaultAsync(x => x.Email == loginValidateModel.Email);
+            
             if (user == null)
                 return StatusCode(401, "MFAPI4011 - Usuário não encontrado");
 
-           // if(!PasswordHasher.Verify(user.Password, loginValidateModel.Password))
-           //     return StatusCode(401, "MFAPI4012 - Senha inválida");
+           if(!PasswordHasher.Verify(user.Password, loginValidateModel.Password))
+                return StatusCode(401, "MFAPI4012 - Senha inválida");
             try
             {
-                var token = tokenService.GenerateToken(user);
+                var token = tokenService.GenerateClientToken(user);
                 return Ok(token);
             }
             catch
             {
                 return StatusCode(500, "MFAPI5005 - Erro interno no servidor ao buscar cliente");
             }
-        } */
+        }
+
+        [HttpPost("login-doctor")]
+        public async Task<IActionResult> LoginDoctorAsync(
+            [FromBody] LoginValidateModel loginValidateModel,
+            [FromServices] DataContext context,
+            [FromServices] TokenService tokenService,
+            CancellationToken cancellationToken)
+        {
+
+            Doctor? user = await context.Doctors.AsNoTracking().FirstOrDefaultAsync(x => x.Email == loginValidateModel.Email);
+
+            if (user == null)
+                return StatusCode(401, "MFAPI4011 - Usuário não encontrado");
+
+            if (!PasswordHasher.Verify(user.Password, loginValidateModel.Password))
+                return StatusCode(401, "MFAPI4012 - Senha inválida");
+            try
+            {
+                var token = tokenService.GenerateDoctorToken(user);
+                return Ok(token);
+            }
+            catch
+            {
+                return StatusCode(500, "MFAPI5005 - Erro interno no servidor ao buscar cliente");
+            }
+        }
+
+        [HttpPost("login-drugstore")]
+        public async Task<IActionResult> LoginDrugstoreAsync(
+            [FromBody] LoginValidateModel loginValidateModel,
+            [FromServices] DataContext context,
+            [FromServices] TokenService tokenService,
+            CancellationToken cancellationToken)
+        {
+
+            Drugstore? user = await context.Drugstores.AsNoTracking().FirstOrDefaultAsync(x => x.Email == loginValidateModel.Email);
+
+            if (user == null)
+                return StatusCode(401, "MFAPI4011 - Usuário não encontrado");
+
+            if (!PasswordHasher.Verify(user.Password, loginValidateModel.Password))
+                return StatusCode(401, "MFAPI4012 - Senha inválida");
+            try
+            {
+                var token = tokenService.GenerateDrugstoreToken(user);
+                return Ok(token);
+            }
+            catch
+            {
+                return StatusCode(500, "MFAPI5005 - Erro interno no servidor ao buscar cliente");
+            }
+        }
 
 
         [Authorize(Roles = "Client")]

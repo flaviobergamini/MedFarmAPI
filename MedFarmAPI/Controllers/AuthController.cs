@@ -16,7 +16,7 @@ namespace MedFarmAPI.Controllers
         [HttpPost("create-client")]
         public async Task<IActionResult> PostClientAsync(
             [FromBody] ClientValidateModel client,
-            //[FromServices] EmailService emailService,
+            [FromServices] EmailService emailService,
             [FromServices] DataContext context,
             CancellationToken cancellationToken)
         {
@@ -40,7 +40,7 @@ namespace MedFarmAPI.Controllers
             };
             try
             {
-                /*var confirmEmail = emailService.Send(
+                var confirmEmail = emailService.Send(
                     model.Name,
                     model.Email,
                     "Bem vindo ao Med Farm!!!",
@@ -49,8 +49,8 @@ namespace MedFarmAPI.Controllers
                     "<h2 style='text-align:center; font-size:10pt'>Conta criada com sucesso</h2>" +
                     "</div>"
 
-                    ); */
-               var confirmEmail = true;
+                    ); 
+               
                 if (confirmEmail)
                 {
                     await context.Clients.AddAsync(model);

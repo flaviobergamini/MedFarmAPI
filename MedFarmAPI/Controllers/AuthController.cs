@@ -1,4 +1,5 @@
 ﻿using MedFarmAPI.Data;
+using MedFarmAPI.MessageResponseModel;
 using MedFarmAPI.Models;
 using MedFarmAPI.Services;
 using MedFarmAPI.ValidateModels;
@@ -16,12 +17,17 @@ namespace MedFarmAPI.Controllers
         [HttpPost("create-client")]
         public async Task<IActionResult> PostClientAsync(
             [FromBody] ClientValidateModel client,
-            //[FromServices] EmailService emailService,
+            [FromServices] EmailService emailService,
+            [FromServices] ViewBodyService viewBodyService,
             [FromServices] DataContext context,
             CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
-                return BadRequest("MFAPI4000 - Usuário inválido");
+                return BadRequest(new MessageModel 
+                {
+                    Code = "MFAPI4001",
+                    Message = "Invalid User"
+                });
 
             var model = new Client
             {
@@ -40,17 +46,13 @@ namespace MedFarmAPI.Controllers
             };
             try
             {
-                /*var confirmEmail = emailService.Send(
+                var confirmEmail = emailService.Send(
                     model.Name,
                     model.Email,
                     "Bem vindo ao Med Farm!!!",
-                    "<div style='background:lightgray'>" +
-                    "<h1 style='text-align:center; font-size:15pt'> Seja bem vindo ao Med Farm</h1>" +
-                    "<h2 style='text-align:center; font-size:10pt'>Conta criada com sucesso</h2>" +
-                    "</div>"
-
-                    ); */
-               var confirmEmail = true;
+                    viewBodyService.BodyEmailClient(model.Name)
+                    ); 
+               
                 if (confirmEmail)
                 {
                     await context.Clients.AddAsync(model);
@@ -59,27 +61,45 @@ namespace MedFarmAPI.Controllers
                 }
                 else
                 {
-                    return StatusCode(404, "MFAPI4041 - E-mail inválido");
+                    return NotFound(new MessageModel
+                    {
+                        Code = "MFAPI4042",
+                        Message = "Invalid email"
+                    });
                 }
             }
             catch (DbUpdateException ex)
             {
-                return BadRequest(ex.Message);
+                return StatusCode(500, new MessageModel
+                {
+                    Code = "MFAPI5001",
+                    Message = "Database error"
+                });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "MFAPI5001 - Erro interno no servidor ao cadastrar cliente");
+                return StatusCode(500, new MessageModel
+                {
+                    Code = "MFAPI5002",
+                    Message = "Internal server error when registering user"
+                }) ;
             }
         }
 
         [HttpPost("create-doctor")]
         public async Task<IActionResult> PostDoctorAsync(
-            [FromBody] DoctorValidateModel doctor, 
+            [FromBody] DoctorValidateModel doctor,
+            [FromServices] EmailService emailService,
+            [FromServices] ViewBodyService viewBodyService,
             [FromServices] DataContext context,
             CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
-                return BadRequest("MFAPI4001 - Usuário inválido");
+                return BadRequest(new MessageModel
+                {
+                    Code = "MFAPI4002",
+                    Message = "Invalid User"
+                });
 
             var model = new Doctor
             {
@@ -98,26 +118,63 @@ namespace MedFarmAPI.Controllers
                 Specialty = doctor.Specialty,
                 RegionalCouncil = doctor.RegionalCouncil
             };
+
             try
             {
-                await context.Doctors.AddAsync(model);
-                await context.SaveChangesAsync();
-                return Created($"v1/create-doctor/{model.Id}", model);
+                var confirmEmail = emailService.Send(
+                    model.Name,
+                    model.Email,
+                    "Bem vindo ao Med Farm!!!",
+                    viewBodyService.BodyEmailDoctor(model.Name)
+                    );
+
+                if (confirmEmail)
+                {
+                    await context.Doctors.AddAsync(model);
+                    await context.SaveChangesAsync();
+                    return Created($"v1/create-doctor/{model.Id}", model);
+                }
+                else
+                {
+                    return NotFound(new MessageModel
+                    {
+                        Code = "MFAPI4043",
+                        Message = "Invalid email"
+                    });
+                }
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, new MessageModel
+                {
+                    Code = "MFAPI5003",
+                    Message = "Database error"
+                });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "MFAPI5002 - Erro interno no servidor ao cadastrar usuário");
+                return StatusCode(500, new MessageModel
+                {
+                    Code = "MFAPI5004",
+                    Message = "Internal server error when registering user"
+                });
             }
         }
 
         [HttpPost("create-drugstore")]
         public async Task<IActionResult> PostDrugstoreAsync(
-            [FromBody] DrugstoreValidateModel drugstore, 
+            [FromBody] DrugstoreValidateModel drugstore,
+            [FromServices] EmailService emailService,
+            [FromServices] ViewBodyService viewBodyService,
             [FromServices] DataContext context, 
             CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
-                return BadRequest("MFAPI4001 - Usuário inválido");
+                return BadRequest(new MessageModel
+                {
+                    Code = "MFAPI4003",
+                    Message = "Invalid User"
+                });
 
             var model = new Drugstore
             {
@@ -136,13 +193,43 @@ namespace MedFarmAPI.Controllers
             };
             try
             {
-                await context.Drugstores.AddAsync(model);
-                await context.SaveChangesAsync();
-                return Created($"v1/create-drugstore/{model.Id}", model);
+                var confirmEmail = emailService.Send(
+                    model.Name,
+                    model.Email,
+                    "Bem vindo ao Med Farm!!!",
+                    viewBodyService.BodyEmailDrugstore(model.Name)
+                    );
+
+                if (confirmEmail)
+                {
+                    await context.Drugstores.AddAsync(model);
+                    await context.SaveChangesAsync();
+                    return Created($"v1/create-drugstore/{model.Id}", model);
+                }
+                else
+                {
+                    return NotFound(new MessageModel
+                    {
+                        Code = "MFAPI4044",
+                        Message = "Invalid email"
+                    });
+                }
+            }
+            catch (DbUpdateException ex)
+            {
+                return StatusCode(500, new MessageModel
+                {
+                    Code = "MFAPI5005",
+                    Message = "Database error"
+                });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "MFAPI5003 - Erro interno no servidor ao cadastrar usuário");
+                return StatusCode(500, new MessageModel
+                {
+                    Code = "MFAPI5006",
+                    Message = "Internal server error when registering user"
+                });
             }
         }
 
@@ -158,18 +245,30 @@ namespace MedFarmAPI.Controllers
             Client? user = await context.Clients.AsNoTracking().FirstOrDefaultAsync(x => x.Email == loginValidateModel.Email);
             
             if (user == null)
-                return StatusCode(401, "MFAPI4011 - Usuário não encontrado");
+                return NotFound(new MessageModel
+                {
+                    Code = "MFAPI4045",
+                    Message = "User not found"
+                });
 
            if(!PasswordHasher.Verify(user.Password, loginValidateModel.Password))
-                return StatusCode(401, "MFAPI4012 - Senha inválida");
+                return StatusCode(401, new MessageModel
+                {
+                    Code = "MFAPI4010",
+                    Message = "Invalid password"
+                });
             try
             {
                 var token = tokenService.GenerateClientToken(user);
                 return Ok(token);
             }
-            catch
+            catch (Exception ex)
             {
-                return StatusCode(500, "MFAPI5005 - Erro interno no servidor ao buscar cliente");
+                return StatusCode(500, new MessageModel
+                {
+                    Code = "MFAPI5007",
+                    Message = "Internal server error when fetching user"
+                });
             }
         }
 
@@ -184,18 +283,30 @@ namespace MedFarmAPI.Controllers
             Doctor? user = await context.Doctors.AsNoTracking().FirstOrDefaultAsync(x => x.Email == loginValidateModel.Email);
 
             if (user == null)
-                return StatusCode(401, "MFAPI4011 - Usuário não encontrado");
+                return NotFound(new MessageModel
+                {
+                    Code = "MFAPI4046",
+                    Message = "User not found"
+                });
 
             if (!PasswordHasher.Verify(user.Password, loginValidateModel.Password))
-                return StatusCode(401, "MFAPI4012 - Senha inválida");
+                return StatusCode(401, new MessageModel
+                {
+                    Code = "MFAPI4011",
+                    Message = "Invalid password"
+                });
             try
             {
                 var token = tokenService.GenerateDoctorToken(user);
                 return Ok(token);
             }
-            catch
+            catch (Exception ex)
             {
-                return StatusCode(500, "MFAPI5005 - Erro interno no servidor ao buscar cliente");
+                return StatusCode(500, new MessageModel
+                {
+                    Code = "MFAPI5008",
+                    Message = "Internal server error when fetching user"
+                });
             }
         }
 
@@ -210,18 +321,30 @@ namespace MedFarmAPI.Controllers
             Drugstore? user = await context.Drugstores.AsNoTracking().FirstOrDefaultAsync(x => x.Email == loginValidateModel.Email);
 
             if (user == null)
-                return StatusCode(401, "MFAPI4011 - Usuário não encontrado");
+                return NotFound(new MessageModel
+                {
+                    Code = "MFAPI4047",
+                    Message = "User not found"
+                });
 
             if (!PasswordHasher.Verify(user.Password, loginValidateModel.Password))
-                return StatusCode(401, "MFAPI4012 - Senha inválida");
+                return StatusCode(401, new MessageModel
+                {
+                    Code = "MFAPI4012",
+                    Message = "Invalid password"
+                });
             try
             {
                 var token = tokenService.GenerateDrugstoreToken(user);
                 return Ok(token);
             }
-            catch
+            catch (Exception ex)
             {
-                return StatusCode(500, "MFAPI5005 - Erro interno no servidor ao buscar cliente");
+                return StatusCode(500, new MessageModel
+                {
+                    Code = "MFAPI5009",
+                    Message = "Internal server error when fetching user"
+                });
             }
         }
 

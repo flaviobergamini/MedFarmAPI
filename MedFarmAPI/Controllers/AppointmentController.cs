@@ -1,4 +1,5 @@
 ﻿using MedFarmAPI.Data;
+using MedFarmAPI.MessageResponseModel;
 using MedFarmAPI.Models;
 using MedFarmAPI.ValidateModels;
 using Microsoft.AspNetCore.Mvc;
@@ -14,15 +15,26 @@ namespace MedFarmAPI.Controllers
         public async Task<IActionResult> PostAsync([FromBody] AppointmentValidateModel appointment, [FromServices] DataContext context)
         {
             if (!ModelState.IsValid)
-                return BadRequest("MFAPI4003 - Consulta inválida");
+                return BadRequest(new MessageModel {
+                    Code = "MFAPI4000",
+                    Message = "Invalid appointment"
+                });
 
             Client? client = await context.Clients.FirstOrDefaultAsync(x => x.Id == appointment.ClientId);
             if(client == null)
-                return NotFound("MFAPI4040 - Cliente não encontrado no Banco de Dados, ID inválido");
+                return NotFound(new MessageModel
+                {
+                    Code = "MFAPI4040",
+                    Message = "Client not found in Database, Invalid ID"
+                });
 
             Doctor? doctor = await context.Doctors.FirstOrDefaultAsync(x => x.Id == appointment.DoctorId);
             if (doctor == null)
-                return NotFound("MFAPI4041 - Médico não encontrado no Banco de Dados, ID inválido");
+                return NotFound(new MessageModel
+                {
+                    Code = "MFAPI4041",
+                    Message = "Doctor not found in Database, Invalid ID"
+                });
 
             var model = new Appointment
             {
@@ -39,7 +51,11 @@ namespace MedFarmAPI.Controllers
                 return Created($"v1/create-appointment/{model.Id}", model);
             }
             catch (Exception ex) {
-                return StatusCode(500, "MFAPI5000 - Erro interno no servidor ao salvar consulta");
+                return StatusCode(500, new MessageModel
+                {
+                    Code = "MFAPI5000",
+                    Message = "Internal server error when saving query"
+                });
             }
         }
 

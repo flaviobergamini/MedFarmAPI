@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MedFarmAPI.MessageResponseModel;
+using Microsoft.AspNetCore.Mvc;
 
 namespace MedFarmAPI.Controllers
 {
@@ -10,7 +11,11 @@ namespace MedFarmAPI.Controllers
         public IActionResult Get()
         {
 
-            return Ok("MFAPI2000 - MedFarmAPI 2022 Ok");
+            return Ok(new MessageModel 
+            {
+                Code = "MFAPI2000",
+                Message = "MedFarmAPI 2022 Ok"
+            });
         }
     }
 }

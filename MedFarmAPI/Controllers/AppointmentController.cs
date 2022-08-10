@@ -48,7 +48,13 @@ namespace MedFarmAPI.Controllers
             {
                 await context.Appointments.AddAsync(model);
                 await context.SaveChangesAsync();
-                return Created($"v1/create-appointment/{model.Id}", model);
+                return StatusCode(201, new AppointmentResponse
+                {
+                    Code = "MFAPI2012",
+                    Id = model.Id,
+                    ClientId = model.Client.Id,
+                    DoctorId = model.Doctor.Id
+                });
             }
             catch (Exception ex) {
                 return StatusCode(500, new MessageModel

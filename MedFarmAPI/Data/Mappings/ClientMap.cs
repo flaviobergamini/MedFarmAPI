@@ -89,6 +89,12 @@ namespace MedFarmAPI.Data.Mappings
             .HasColumnName("Roles")
             .HasColumnType("NVARCHAR")
             .HasMaxLength(20);
+
+            builder.Property(x => x.RefreshToken)
+            .IsRequired()
+            .HasColumnName("RefreshToken")
+            .HasColumnType("NVARCHAR")
+            .HasMaxLength(1000);
         }
     }
 }

@@ -149,3 +149,68 @@ GO
 COMMIT;
 GO
 
+BEGIN TRANSACTION;
+GO
+
+DECLARE @var1 sysname;
+SELECT @var1 = [d].[name]
+FROM [sys].[default_constraints] [d]
+INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
+WHERE ([d].[parent_object_id] = OBJECT_ID(N'[Drugstore]') AND [c].[name] = N'Cnpj');
+IF @var1 IS NOT NULL EXEC(N'ALTER TABLE [Drugstore] DROP CONSTRAINT [' + @var1 + '];');
+ALTER TABLE [Drugstore] ALTER COLUMN [Cnpj] NVARCHAR(18) NOT NULL;
+GO
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20220801021136_ModifySizeCnpj', N'6.0.7');
+GO
+
+COMMIT;
+GO
+
+BEGIN TRANSACTION;
+GO
+
+ALTER TABLE [Drugstore] ADD [PasswordHash] NVARCHAR(1000) NOT NULL DEFAULT N'';
+GO
+
+ALTER TABLE [Drugstore] ADD [RefreshToken] NVARCHAR(1000) NOT NULL DEFAULT N'';
+GO
+
+ALTER TABLE [Drugstore] ADD [Roles] NVARCHAR(20) NOT NULL DEFAULT N'';
+GO
+
+ALTER TABLE [Doctor] ADD [PasswordHash] NVARCHAR(1000) NOT NULL DEFAULT N'';
+GO
+
+ALTER TABLE [Doctor] ADD [RefreshToken] NVARCHAR(1000) NOT NULL DEFAULT N'';
+GO
+
+ALTER TABLE [Doctor] ADD [Roles] NVARCHAR(20) NOT NULL DEFAULT N'';
+GO
+
+ALTER TABLE [Client] ADD [PasswordHash] NVARCHAR(1000) NOT NULL DEFAULT N'';
+GO
+
+ALTER TABLE [Client] ADD [RefreshToken] NVARCHAR(1000) NOT NULL DEFAULT N'';
+GO
+
+ALTER TABLE [Client] ADD [Roles] NVARCHAR(20) NOT NULL DEFAULT N'';
+GO
+
+CREATE UNIQUE INDEX [IX_Drugstore_Email] ON [Drugstore] ([Email]);
+GO
+
+CREATE UNIQUE INDEX [IX_Doctor_Email] ON [Doctor] ([Email]);
+GO
+
+CREATE UNIQUE INDEX [IX_Client_Email] ON [Client] ([Email]);
+GO
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20220810010834_CreateResfreshTokenAttribute', N'6.0.7');
+GO
+
+COMMIT;
+GO
+

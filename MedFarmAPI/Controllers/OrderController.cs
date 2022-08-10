@@ -54,7 +54,13 @@ namespace MedFarmAPI.Controllers
             {
                 await context.Orders.AddAsync(model);
                 await context.SaveChangesAsync();
-                return Created($"v1/create-order/{order.ClientId}", order);
+                return StatusCode(201, new OrderResponse
+                {
+                    Code = "MFAPI2013",
+                    Id = model.Id,
+                    ClientId = model.Client.Id,
+                    DrugstoreId = model.Drugstores.Id
+                });
             }
             catch (Exception ex)
             {

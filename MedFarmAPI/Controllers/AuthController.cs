@@ -42,7 +42,8 @@ namespace MedFarmAPI.Controllers
                 Street = client.Street,
                 StreetNumber = client.StreetNumber,
                 Password = PasswordHasher.Hash(client.Password),
-                Roles = client.Roles
+                RefreshToken = Convert.ToBase64String((Guid.NewGuid()).ToByteArray()),
+            Roles = client.Roles
             };
             try
             {
@@ -57,7 +58,13 @@ namespace MedFarmAPI.Controllers
                 {
                     await context.Clients.AddAsync(model);
                     await context.SaveChangesAsync();
-                    return Created($"v1/create-client/{model.Id}", model);
+                    return StatusCode(201, new SignUpResponse
+                    {
+                        Code = "MFAPI2010",
+                        Id = model.Id,
+                        Name = model.Name,
+                        RefreshToken = model.RefreshToken
+                    });
                 }
                 else
                 {
@@ -114,6 +121,7 @@ namespace MedFarmAPI.Controllers
                 Street = doctor.Street,
                 StreetNumber = doctor.StreetNumber,
                 Password = PasswordHasher.Hash(doctor.Password),
+                RefreshToken = Convert.ToBase64String((Guid.NewGuid()).ToByteArray()),
                 Roles = doctor.Roles,
                 Specialty = doctor.Specialty,
                 RegionalCouncil = doctor.RegionalCouncil
@@ -132,7 +140,13 @@ namespace MedFarmAPI.Controllers
                 {
                     await context.Doctors.AddAsync(model);
                     await context.SaveChangesAsync();
-                    return Created($"v1/create-doctor/{model.Id}", model);
+                    return StatusCode(201, new SignUpResponse
+                    {
+                        Code = "MFAPI2011",
+                        Id = model.Id,
+                        Name = model.Name,
+                        RefreshToken = model.RefreshToken
+                    });
                 }
                 else
                 {
@@ -189,6 +203,7 @@ namespace MedFarmAPI.Controllers
                 Street = drugstore.Street,
                 StreetNumber = drugstore.StreetNumber,
                 Password = PasswordHasher.Hash(drugstore.Password),
+                RefreshToken = Convert.ToBase64String((Guid.NewGuid()).ToByteArray()),
                 Roles = drugstore.Roles
             };
             try
@@ -204,7 +219,13 @@ namespace MedFarmAPI.Controllers
                 {
                     await context.Drugstores.AddAsync(model);
                     await context.SaveChangesAsync();
-                    return Created($"v1/create-drugstore/{model.Id}", model);
+                    return StatusCode(201, new SignUpResponse
+                    {
+                        Code = "MFAPI2012",
+                        Id = model.Id,
+                        Name = model.Name,
+                        RefreshToken = model.RefreshToken
+                    });
                 }
                 else
                 {
@@ -260,7 +281,12 @@ namespace MedFarmAPI.Controllers
             try
             {
                 var token = tokenService.GenerateClientToken(user);
-                return Ok(token);
+                return Ok(new LoginResponse
+                {
+                    AccessToken = token,
+                    RefreshToken = user.RefreshToken,
+                    Id = user.Id
+                });
             }
             catch (Exception ex)
             {
@@ -298,7 +324,12 @@ namespace MedFarmAPI.Controllers
             try
             {
                 var token = tokenService.GenerateDoctorToken(user);
-                return Ok(token);
+                return Ok(new LoginResponse
+                {
+                    AccessToken = token,
+                    RefreshToken = user.RefreshToken,
+                    Id = user.Id
+                });
             }
             catch (Exception ex)
             {
@@ -336,7 +367,12 @@ namespace MedFarmAPI.Controllers
             try
             {
                 var token = tokenService.GenerateDrugstoreToken(user);
-                return Ok(token);
+                return Ok(new LoginResponse
+                {
+                    AccessToken = token,
+                    RefreshToken = user.RefreshToken,
+                    Id = user.Id
+                });
             }
             catch (Exception ex)
             {

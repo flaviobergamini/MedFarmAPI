@@ -1,4 +1,5 @@
 ﻿using MedFarmAPI.Data;
+using MedFarmAPI.MessageResponseModel;
 using MedFarmAPI.Models;
 using MedFarmAPI.ValidateModels;
 using Microsoft.AspNetCore.Mvc;
@@ -14,15 +15,27 @@ namespace MedFarmAPI.Controllers
         public async Task<IActionResult> PostAsync([FromBody] OrderValidateModel order, [FromServices] DataContext context)
         {
             if (!ModelState.IsValid)
-                return BadRequest("MFAPI4004 - Pedido inválido");
+                return BadRequest(new MessageModel
+                {
+                    Code = "MFAPI4004",
+                    Message = "Invalid order"
+                });
 
             Client? client = await context.Clients.FirstOrDefaultAsync(x => x.Id == order.ClientId);
             if (client == null)
-                return NotFound("MFAPI4042 - Cliente não encontrado no Banco de Dados, ID inválido");
+                return NotFound(new MessageModel
+                {
+                    Code = "MFAPI4048",
+                    Message = "Client not found in Database, Invalid ID"
+                });
 
             Drugstore? drugstore = await context.Drugstores.FirstOrDefaultAsync(x => x.Id == order.DrugstoresId);
             if (drugstore == null)
-                return NotFound("MFAPI4043 - Farmácia não encontrada no Banco de Dados, ID inválido");
+                return NotFound(new MessageModel
+                {
+                    Code = "MFAPI4049",
+                    Message = "Drugstore not found in Database, Invalid ID"
+                });
 
             var model = new Order
             {
@@ -45,7 +58,11 @@ namespace MedFarmAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "MFAPI5004 - Erro interno no servidor ao cadastrar pedido");
+                return StatusCode(500, new MessageModel
+                {
+                    Code = "MFAPI50010",
+                    Message = "Internal server error when registering order"
+                });
             }
         }
 

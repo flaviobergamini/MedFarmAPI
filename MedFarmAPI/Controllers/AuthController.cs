@@ -14,7 +14,7 @@ namespace MedFarmAPI.Controllers
     [Route("v1/auth")]
     public class AuthController:ControllerBase
     {
-        [HttpPost("create-client")]
+        [HttpPost("create/client")]
         public async Task<IActionResult> PostClientAsync(
             [FromBody] ClientValidateModel client,
             [FromServices] EmailService emailService,
@@ -93,7 +93,7 @@ namespace MedFarmAPI.Controllers
             }
         }
 
-        [HttpPost("create-doctor")]
+        [HttpPost("create/doctor")]
         public async Task<IActionResult> PostDoctorAsync(
             [FromBody] DoctorValidateModel doctor,
             [FromServices] EmailService emailService,
@@ -175,7 +175,7 @@ namespace MedFarmAPI.Controllers
             }
         }
 
-        [HttpPost("create-drugstore")]
+        [HttpPost("create/drugstore")]
         public async Task<IActionResult> PostDrugstoreAsync(
             [FromBody] DrugstoreValidateModel drugstore,
             [FromServices] EmailService emailService,
@@ -255,7 +255,7 @@ namespace MedFarmAPI.Controllers
         }
 
 
-        [HttpPost("login-client")]
+        [HttpPost("login/client")]
         public async Task<IActionResult> LoginClientAsync(
             [FromBody] LoginValidateModel loginValidateModel, 
             [FromServices] DataContext context, 
@@ -299,7 +299,7 @@ namespace MedFarmAPI.Controllers
             }
         }
 
-        [HttpPost("login-doctor")]
+        [HttpPost("login/doctor")]
         public async Task<IActionResult> LoginDoctorAsync(
             [FromBody] LoginValidateModel loginValidateModel,
             [FromServices] DataContext context,
@@ -342,7 +342,7 @@ namespace MedFarmAPI.Controllers
             }
         }
 
-        [HttpPost("login-drugstore")]
+        [HttpPost("login/drugstore")]
         public async Task<IActionResult> LoginDrugstoreAsync(
             [FromBody] LoginValidateModel loginValidateModel,
             [FromServices] DataContext context,
@@ -384,10 +384,5 @@ namespace MedFarmAPI.Controllers
                 });
             }
         }
-
-
-        [Authorize(Roles = "Client")]
-        [HttpGet("client-test")]
-        public IActionResult GetUser(CancellationToken cancellationToken) => Ok("Client Logado");
     }
 }

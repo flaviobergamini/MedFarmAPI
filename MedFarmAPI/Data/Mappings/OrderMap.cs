@@ -17,6 +17,11 @@ namespace MedFarmAPI.Data.Mappings
 
             //atributos da tabela
 
+            builder.Property(x => x.DateTimeOrder)
+            .IsRequired()
+            .HasColumnName("DateTimeOrder")
+            .HasColumnType("DATETIME");
+
             builder.Property(x => x.Image)
             .IsRequired()
             .HasColumnName("Image")

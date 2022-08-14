@@ -46,8 +46,9 @@ namespace MedFarmAPI.Controllers
                 Cep = order.Cep,
                 Street = order.Street,
                 StreetNumber = order.StreetNumber,
+                DateTimeOrder = order.DateTimeOrder,
                 Client = client,
-                Drugstores = drugstore
+                Drugstores = drugstore,
             };
 
             try

@@ -104,7 +104,7 @@ CREATE INDEX [IX_Order_DrugstoresId] ON [Order] ([DrugstoresId]);
 GO
 
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20220730041313_CreateDatabase', N'6.0.7');
+VALUES (N'20220730041313_CreateDatabase', N'6.0.8');
 GO
 
 COMMIT;
@@ -114,7 +114,7 @@ BEGIN TRANSACTION;
 GO
 
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20220731174753_modifyDatabase', N'6.0.7');
+VALUES (N'20220731174753_modifyDatabase', N'6.0.8');
 GO
 
 COMMIT;
@@ -133,7 +133,7 @@ ALTER TABLE [Appointment] ALTER COLUMN [VideoCallUrl] TEXT NULL;
 GO
 
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20220731193530_AppointmentVideoCallUrlIsNull', N'6.0.7');
+VALUES (N'20220731193530_AppointmentVideoCallUrlIsNull', N'6.0.8');
 GO
 
 COMMIT;
@@ -143,7 +143,7 @@ BEGIN TRANSACTION;
 GO
 
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20220731202651_CreateDatabaseAgain', N'6.0.7');
+VALUES (N'20220731202651_CreateDatabaseAgain', N'6.0.8');
 GO
 
 COMMIT;
@@ -162,7 +162,7 @@ ALTER TABLE [Drugstore] ALTER COLUMN [Cnpj] NVARCHAR(18) NOT NULL;
 GO
 
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20220801021136_ModifySizeCnpj', N'6.0.7');
+VALUES (N'20220801021136_ModifySizeCnpj', N'6.0.8');
 GO
 
 COMMIT;
@@ -208,7 +208,7 @@ CREATE UNIQUE INDEX [IX_Client_Email] ON [Client] ([Email]);
 GO
 
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20220810010834_CreateResfreshTokenAttribute', N'6.0.7');
+VALUES (N'20220810010834_CreateResfreshTokenAttribute', N'6.0.8');
 GO
 
 COMMIT;
@@ -221,7 +221,20 @@ ALTER TABLE [Order] ADD [DateTimeOrder] DATETIME NOT NULL DEFAULT '0001-01-01T00
 GO
 
 INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-VALUES (N'20220814014243_CreateDataOrders', N'6.0.7');
+VALUES (N'20220814014243_CreateDataOrders', N'6.0.8');
+GO
+
+COMMIT;
+GO
+
+BEGIN TRANSACTION;
+GO
+
+ALTER TABLE [Appointment] ADD [Confirmed] BIT NOT NULL DEFAULT CAST(0 AS BIT);
+GO
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20220814180210_CreateAttributeConfirmedInOrderTable', N'6.0.8');
 GO
 
 COMMIT;

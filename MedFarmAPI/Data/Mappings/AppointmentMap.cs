@@ -32,6 +32,11 @@ namespace MedFarmAPI.Data.Mappings
             .HasColumnName("VideoCallUrl")
             .HasColumnType("TEXT");
 
+            builder.Property(x => x.Confirmed)
+            .IsRequired()
+            .HasColumnName("Confirmed")
+            .HasColumnType("BIT");
+
             builder.HasOne(x => x.Client).WithMany(x => x.Appointments)
                 .HasConstraintName("FK_Appointments_Clients")
                 .OnDelete(DeleteBehavior.Cascade);

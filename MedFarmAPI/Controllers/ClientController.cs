@@ -1,7 +1,7 @@
 ﻿using MedFarmAPI.Data;
 using MedFarmAPI.MessageResponseModel;
 using MedFarmAPI.MessageResponseModel.ClientResponse;
-using MedFarmAPI.MessageResponseModel.ClientResponse.Model;
+using MedFarmAPI.Models.ClientResquest;
 using MedFarmAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,15 +10,15 @@ using Microsoft.EntityFrameworkCore;
 namespace MedFarmAPI.Controllers
 {
     [ApiController]
-    [Route("v1/[controller]")]
+    [Route("v1/client")]
     public class ClientController : ControllerBase
     {
 
         [Authorize(Roles = "Client")]
-        [HttpPost("client-logged")]
-        public async Task<IActionResult> PostAsync(
+        [HttpPost("history")]
+        public async Task<IActionResult> PostHistoryAsync(
             [FromServices] DataContext context,
-            [FromBody] ClientLoggedModel clientLoggedModel,
+            [FromBody] ClientHistoryRequest clientHistoryRequest,
             CancellationToken cancellationToken
             )
         {
@@ -35,7 +35,7 @@ namespace MedFarmAPI.Controllers
             try
             {
                 Client? clients = await context.Clients.AsNoTracking().Include(a => a.Appointments).Include(b => b.Orders)
-                   .FirstOrDefaultAsync(x => x.Id == clientLoggedModel.Id);
+                   .FirstOrDefaultAsync(x => x.Id == clientHistoryRequest.Id);
 
                 if (clients == null)
                     return NotFound(new MessageModel
@@ -44,43 +44,44 @@ namespace MedFarmAPI.Controllers
                         Message = "Client not found in Database, Invalid ID"
                     });
 
-                Order? orders = await context.Orders.AsNoTracking().Include(a => a.Drugstores).Include(b => b.Client)
-                   .FirstOrDefaultAsync(x => x.Client.Id == clients.Id);
+                 var appointments = (from ap in context.Appointments.Include(a => a.Doctor).Include(b => b.Client)
+                     where ap.Client.Id == clients.Id || ap.Client.RefreshToken == clients.RefreshToken
+                     select ap);
 
-                Appointment? appointments = await context.Appointments.AsNoTracking().Include(a => a.Doctor).Include(b => b.Client)
-                   .FirstOrDefaultAsync(x => x.Client.Id == clients.Id);
-                
+                var orders = (from order in context.Orders.Include(a => a.Drugstores).Include(b => b.Client)
+                     where order.Client.Id == clients.Id || order.Client.RefreshToken == clients.RefreshToken
+                     select order);
+
                 ClientLoggedDoctorResponse doctorResponse;
                 ClientLoggedOrderResponse orderResponse;
-                
-                for( var i = 0; i < clients.Appointments.Count; i++)
+
+                foreach(var appointment in appointments)
                 {
                     doctorResponse = new ClientLoggedDoctorResponse();
-                    doctorResponse.Name = appointments.Doctor.Name;
-                    doctorResponse.Street = appointments.Doctor.Street;
-                    doctorResponse.DoctorSpecialty = appointments.Doctor.Specialty;
-                    doctorResponse.DoctorDateTimeAppointment = appointments.DateTimeAppointment;
+                    doctorResponse.Name = appointment.Doctor.Name;
+                    doctorResponse.Street = appointment.Doctor.Street;
+                    doctorResponse.DoctorSpecialty = appointment.Doctor.Specialty;
+                    doctorResponse.DoctorDateTimeAppointment = appointment.DateTimeAppointment;
 
                     doctorAppointments.Add(doctorResponse);
                 }
 
-                for (var i = 0; i < clients.Orders.Count; i++)
+                foreach(var order in orders)
                 {
                     orderResponse = new ClientLoggedOrderResponse();
-                    orderResponse.Name = orders.Drugstores.Name;
-                    orderResponse.Street = orders.Drugstores.Street;
-                    orderResponse.DrugstoreDateTimeOrder = orders.DateTimeOrder; 
+                    orderResponse.Name = order.Drugstores.Name;
+                    orderResponse.Street = order.Drugstores.Street;
+                    orderResponse.DrugstoreDateTimeOrder = order.DateTimeOrder;
 
                     drugstoreOrders.Add(orderResponse);
                 }
 
-                var requests = new {
+                return Ok(new
+                {
                     Code = "MFAPI2001",
                     doctorList = doctorAppointments,
                     drugstoreList = drugstoreOrders
-                };
-
-                return Ok(requests); 
+                });
             }
             catch
             {
@@ -89,6 +90,61 @@ namespace MedFarmAPI.Controllers
                     Code = "MFAPI50011",
                     Message = "Internal server error when fetching a client"
                 });
+            }
+        }
+
+        [Authorize(Roles = "Client")]
+        [HttpPost("search")]
+        public async Task<IActionResult> PostSearchAsync(
+            [FromServices] DataContext context,
+            [FromBody] ClientSearchRequest clientSearchRequest,
+            CancellationToken cancellationToken
+            )
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(new MessageModel
+                {
+                    Code = "MFAPI4006",
+                    Message = "Invalid client logged in"
+                });
+
+            switch (clientSearchRequest.Category)
+            {
+                case "Doctor":
+                    if(clientSearchRequest.Specialty.Length == 0 || clientSearchRequest.Specialty == null)
+                        return BadRequest(new MessageModel
+                        {
+                            Code = "MFAPI4007",
+                            Message = "Invalid Specialty"
+                        });
+               
+                    var doctors = context.Doctors?.AsNoTracking()
+                    .Where(x => x.Specialty == clientSearchRequest.Specialty && x.City == clientSearchRequest.City).ToList();
+                    return Ok(new
+                    {
+                        Code = "MFAPI2002",
+                        Doctors = doctors
+                    });
+
+                    break;
+
+                case "Drugstore":
+                    var drugstores = context.Drugstores.AsNoTracking().Where(x => x.City == clientSearchRequest.City);
+                    return Ok(new
+                    {
+                        Code = "MFAPI2003",
+                        Drugstores = drugstores
+                    });
+
+                    break;
+
+                default:
+                    return BadRequest(new MessageModel
+                    {
+                        Code = "MFAPI4007",
+                        Message = "Invalid category. Send only, Doctor or Drugstore"
+                    });
+                    break;
             }
         }
     }

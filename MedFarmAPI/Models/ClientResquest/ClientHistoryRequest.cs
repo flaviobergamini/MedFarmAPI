@@ -1,6 +1,6 @@
-﻿namespace MedFarmAPI.Models
+﻿namespace MedFarmAPI.Models.ClientResquest
 {
-    public class ClientLoggedModel
+    public class ClientHistoryRequest
     {
         public int Id { get; set; }
         public string RefreshToken { get; set; } = null!;

@@ -283,6 +283,7 @@ namespace MedFarmAPI.Controllers
                 var token = tokenService.GenerateClientToken(user);
                 return Ok(new LoginResponse
                 {
+                    Code = "MFAPI2003",
                     AccessToken = token,
                     RefreshToken = user.RefreshToken,
                     Id = user.Id

@@ -41,6 +41,7 @@ namespace MedFarmAPI.Controllers
                 DateTimeAppointment = appointment.DateTimeAppointment,
                 Remote = appointment.Remote,
                 VideoCallUrl = appointment.VideoCallUrl,
+                Payment = appointment.Payment,
                 Client = client,
                 Doctor = doctor
             };

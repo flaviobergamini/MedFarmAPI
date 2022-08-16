@@ -290,3 +290,16 @@ GO
 COMMIT;
 GO
 
+BEGIN TRANSACTION;
+GO
+
+ALTER TABLE [Appointment] ADD [Payment] NVARCHAR(20) NOT NULL DEFAULT N'';
+GO
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20220816021828_CreatePaymentAttributeInTableAppointment', N'6.0.8');
+GO
+
+COMMIT;
+GO
+

@@ -6,6 +6,7 @@ namespace MedFarmAPI.Models
         public bool Remote { get; set; }
         public string? VideoCallUrl { get; set; } = string.Empty;
         public bool Confirmed { get; set; }
+        public string Payment { get; set; } = string.Empty;
         public Client Client { get; set; } = new Client();
         public Doctor Doctor { get; set; } = new Doctor();
 

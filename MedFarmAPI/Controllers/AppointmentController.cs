@@ -2,6 +2,7 @@
 using MedFarmAPI.MessageResponseModel;
 using MedFarmAPI.Models;
 using MedFarmAPI.ValidateModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -11,17 +12,23 @@ namespace MedFarmAPI.Controllers
     [Route("v1/[controller]")]
     public class AppointmentController:ControllerBase
     {
-        [HttpPost("create-appointment")]
-        public async Task<IActionResult> PostAsync([FromBody] AppointmentValidateModel appointment, [FromServices] DataContext context)
+        [Authorize(Roles = "Client")]
+        [HttpPost("appointment")]
+        public async Task<IActionResult> PostAsync(
+            [FromBody] AppointmentValidateModel appointment, 
+            [FromServices] DataContext context,
+            CancellationToken cancellationToken
+            )
         {
             if (!ModelState.IsValid)
-                return BadRequest(new MessageModel {
+                return BadRequest(new MessageModel
+                {
                     Code = "MFAPI4000",
                     Message = "Invalid appointment"
                 });
 
             Client? client = await context.Clients.FirstOrDefaultAsync(x => x.Id == appointment.ClientId);
-            if(client == null)
+            if (client == null)
                 return NotFound(new MessageModel
                 {
                     Code = "MFAPI4040",
@@ -57,7 +64,8 @@ namespace MedFarmAPI.Controllers
                     DoctorId = model.Doctor.Id
                 });
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 return StatusCode(500, new MessageModel
                 {
                     Code = "MFAPI5000",

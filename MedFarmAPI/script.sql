@@ -303,3 +303,16 @@ GO
 COMMIT;
 GO
 
+BEGIN TRANSACTION;
+GO
+
+ALTER TABLE [Order] ADD [Payment] NVARCHAR(20) NOT NULL DEFAULT N'';
+GO
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20220816022519_CreatePaymentAttributeInTableOrder', N'6.0.8');
+GO
+
+COMMIT;
+GO
+

@@ -9,5 +9,6 @@ namespace MedFarmAPI.ValidateModels
         [Required] public int ClientId { get; set; }
         [Required] public int DrugstoresId { get; set; }
         [Required] public DateTime DateTimeOrder { get; set; }
+        [Required] public string Payment { get; set; } = string.Empty;
     }
 }

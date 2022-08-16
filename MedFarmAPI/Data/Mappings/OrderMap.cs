@@ -67,6 +67,12 @@ namespace MedFarmAPI.Data.Mappings
             .HasColumnType("NVARCHAR")
             .HasMaxLength(300);
 
+            builder.Property(x => x.Payment)
+            .IsRequired(true)
+            .HasColumnName("Payment")
+            .HasColumnType("NVARCHAR")
+            .HasMaxLength(20);
+
             builder.HasOne(x => x.Client).WithMany(x => x.Orders)
                 .HasConstraintName("FK_Orders_Clients")
                 .OnDelete(DeleteBehavior.Cascade);

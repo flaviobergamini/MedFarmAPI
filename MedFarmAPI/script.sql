@@ -240,3 +240,53 @@ GO
 COMMIT;
 GO
 
+BEGIN TRANSACTION;
+GO
+
+ALTER TABLE [Order] ADD [District] nvarchar(max) NOT NULL DEFAULT N'';
+GO
+
+ALTER TABLE [Drugstore] ADD [District] NVARCHAR(300) NOT NULL DEFAULT N'';
+GO
+
+ALTER TABLE [Doctor] ADD [District] NVARCHAR(300) NOT NULL DEFAULT N'';
+GO
+
+ALTER TABLE [Client] ADD [District] nvarchar(max) NOT NULL DEFAULT N'';
+GO
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20220816013952_CreateDistrictAttributeInTablesClientDoctorDrugstore', N'6.0.8');
+GO
+
+COMMIT;
+GO
+
+BEGIN TRANSACTION;
+GO
+
+DECLARE @var2 sysname;
+SELECT @var2 = [d].[name]
+FROM [sys].[default_constraints] [d]
+INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
+WHERE ([d].[parent_object_id] = OBJECT_ID(N'[Order]') AND [c].[name] = N'District');
+IF @var2 IS NOT NULL EXEC(N'ALTER TABLE [Order] DROP CONSTRAINT [' + @var2 + '];');
+ALTER TABLE [Order] ALTER COLUMN [District] NVARCHAR(300) NOT NULL;
+GO
+
+DECLARE @var3 sysname;
+SELECT @var3 = [d].[name]
+FROM [sys].[default_constraints] [d]
+INNER JOIN [sys].[columns] [c] ON [d].[parent_column_id] = [c].[column_id] AND [d].[parent_object_id] = [c].[object_id]
+WHERE ([d].[parent_object_id] = OBJECT_ID(N'[Client]') AND [c].[name] = N'District');
+IF @var3 IS NOT NULL EXEC(N'ALTER TABLE [Client] DROP CONSTRAINT [' + @var3 + '];');
+ALTER TABLE [Client] ALTER COLUMN [District] NVARCHAR(300) NOT NULL;
+GO
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20220816015026_CreateDistrictAttributeInTableOrder', N'6.0.8');
+GO
+
+COMMIT;
+GO
+

@@ -44,6 +44,12 @@ namespace MedFarmAPI.Data.Mappings
             .HasColumnType("NVARCHAR")
             .HasMaxLength(300);
 
+            builder.Property(x => x.District)
+            .IsRequired(true)
+            .HasColumnName("District")
+            .HasColumnType("NVARCHAR")
+            .HasMaxLength(300);
+
             builder.Property(x => x.Cep)
             .IsRequired()
             .HasColumnName("Cep")

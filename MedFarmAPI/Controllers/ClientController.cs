@@ -44,18 +44,18 @@ namespace MedFarmAPI.Controllers
                         Message = "Client not found in Database, Invalid ID"
                     });
 
-                 var appointments = (from ap in context.Appointments.Include(a => a.Doctor).Include(b => b.Client)
-                     where ap.Client.Id == clients.Id || ap.Client.RefreshToken == clients.RefreshToken
-                     select ap);
+                var appointments = (from ap in context.Appointments.Include(a => a.Doctor).Include(b => b.Client)
+                                    where ap.Client.Id == clients.Id || ap.Client.RefreshToken == clients.RefreshToken
+                                    select ap);
 
                 var orders = (from order in context.Orders.Include(a => a.Drugstores).Include(b => b.Client)
-                     where order.Client.Id == clients.Id || order.Client.RefreshToken == clients.RefreshToken
-                     select order);
+                              where order.Client.Id == clients.Id || order.Client.RefreshToken == clients.RefreshToken
+                              select order);
 
                 ClientLoggedDoctorResponse doctorResponse;
                 ClientLoggedOrderResponse orderResponse;
 
-                foreach(var appointment in appointments)
+                foreach (var appointment in appointments)
                 {
                     doctorResponse = new ClientLoggedDoctorResponse();
                     doctorResponse.Name = appointment.Doctor.Name;
@@ -66,7 +66,7 @@ namespace MedFarmAPI.Controllers
                     doctorAppointments.Add(doctorResponse);
                 }
 
-                foreach(var order in orders)
+                foreach (var order in orders)
                 {
                     orderResponse = new ClientLoggedOrderResponse();
                     orderResponse.Name = order.Drugstores.Name;
@@ -111,13 +111,13 @@ namespace MedFarmAPI.Controllers
             switch (clientSearchRequest.Category)
             {
                 case "Doctor":
-                    if(clientSearchRequest.Specialty.Length == 0 || clientSearchRequest.Specialty == null)
+                    if (clientSearchRequest.Specialty.Length == 0 || clientSearchRequest.Specialty == null)
                         return BadRequest(new MessageModel
                         {
                             Code = "MFAPI4007",
                             Message = "Invalid Specialty"
                         });
-               
+
                     var doctors = context.Doctors?.AsNoTracking()
                     .Where(x => x.Specialty == clientSearchRequest.Specialty && x.City == clientSearchRequest.City).ToList();
                     return Ok(new
@@ -145,6 +145,72 @@ namespace MedFarmAPI.Controllers
                         Message = "Invalid category. Send only, Doctor or Drugstore"
                     });
                     break;
+            }
+        }
+
+        [Authorize(Roles = "Client")]
+        [HttpGet("doctor/{id:int}")]
+        public async Task<IActionResult> GetDoctorAsync(
+            [FromServices] DataContext context,
+            [FromRoute] int id,
+            CancellationToken cancellationToken
+            )
+        {
+            var doctor = await context.Doctors.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+
+            if (doctor == null)
+                return NotFound(new MessageModel
+                {
+                    Code = "MFAPI40411",
+                    Message = "Doctor not found in Database, Invalid ID"
+                });
+            else
+            {
+                return Ok(new
+                {
+                    Code = "MFAPI2004",
+                    Doctor = new
+                    {
+                        Name = doctor.Name,
+                        Street = doctor.Street,
+                        District = doctor.District,
+                        City = doctor.City,
+                        StreetNumber = doctor.StreetNumber
+                    }
+                });
+            }
+        }
+
+        [Authorize(Roles = "Client")]
+        [HttpGet("drugstore/{id:int}")]
+        public async Task<IActionResult> GetDrugstoreAsync(
+            [FromServices] DataContext context,
+            [FromRoute] int id,
+            CancellationToken cancellationToken
+            )
+        {
+            var drugstore = await context.Drugstores.AsNoTracking().FirstOrDefaultAsync(x => x.Id == id);
+
+            if (drugstore == null)
+                return NotFound(new MessageModel
+                {
+                    Code = "MFAPI40412",
+                    Message = "Drugstore not found in Database, Invalid ID"
+                });
+            else
+            {
+                return Ok(new
+                {
+                    Code = "MFAPI2005",
+                    Drugstore = new
+                    {
+                        Name = drugstore.Name,
+                        Street = drugstore.Street,
+                        District = drugstore.District,
+                        City = drugstore.City,
+                        StreetNumber = drugstore.StreetNumber
+                    }
+                });
             }
         }
     }

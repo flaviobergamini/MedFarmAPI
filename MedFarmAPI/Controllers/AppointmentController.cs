@@ -2,6 +2,7 @@
 using MedFarmAPI.MessageResponseModel;
 using MedFarmAPI.MessageResponseModel.AppointmentDoctorResponse;
 using MedFarmAPI.Models;
+using MedFarmAPI.Models.AppointmentDoctorRequest;
 using MedFarmAPI.ValidateModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -76,29 +77,38 @@ namespace MedFarmAPI.Controllers
         }
 
         [Authorize(Roles = "Doctor")]
-        [HttpGet("doctor/confirmed/{id:int}")]
+        [HttpPost("doctor/confirmed")]
         public async Task<IActionResult> GetAppointmentConfirmedAsync(
             [FromServices] DataContext context,
-            [FromRoute] int id,
+            [FromBody] AppointmentDoctorRequest appointmentDoctorRequest,
             CancellationToken cancellationToken)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(new MessageModel
+                {
+                    Code = "MFAPI4009",
+                    Message = "Invalid request. Make sure the ID is correct or the date is in the format yyyy-mm-dd"
+                });
+
             try
             {
-                var appointments = (from ap in context.Appointments.Include(a => a.Doctor).Include(b => b.Client)
-                                    where ap.Confirmed == true && ap.Doctor.Id == id
-                                    select ap);
+                var appointments = await (from ap in context.Appointments.Include(a => a.Doctor).Include(b => b.Client)
+                                    where ap.Confirmed == true && ap.Doctor.Id == appointmentDoctorRequest.Id
+                                          select ap).ToListAsync();
 
                 List<AppointmentDoctorResponse> listAppointments = new List<AppointmentDoctorResponse>();
                 AppointmentDoctorResponse appointmentDoctor;
 
                 foreach (var appointment in appointments)
                 {
-                    appointmentDoctor = new AppointmentDoctorResponse();
-                    appointmentDoctor.Name = appointment.Client.Name;
-                    appointmentDoctor.Date = appointment.DateTimeAppointment;
-                    appointmentDoctor.Remote = appointment.Remote;
-                    listAppointments.Add(appointmentDoctor);
-                    
+                   if ((appointment.DateTimeAppointment.ToString()).Substring(0, 10) == appointmentDoctorRequest.Date.ToString().Substring(0, 10))
+                    {
+                        appointmentDoctor = new AppointmentDoctorResponse();
+                        appointmentDoctor.Name = appointment.Client.Name;
+                        appointmentDoctor.Date = appointment.DateTimeAppointment;
+                        appointmentDoctor.Remote = appointment.Remote;
+                        listAppointments.Add(appointmentDoctor);
+                    }
                 }
 
                 return Ok(new
@@ -127,9 +137,9 @@ namespace MedFarmAPI.Controllers
         {
             try
             {
-                var appointments = (from ap in context.Appointments.Include(a => a.Doctor).Include(b => b.Client)
+                var appointments = await (from ap in context.Appointments.Include(a => a.Doctor).Include(b => b.Client)
                                     where ap.Confirmed == false && ap.Doctor.Id == id
-                                    select ap.Client.Name);
+                                    select ap.Client.Name).ToListAsync();
 
                 return Ok(new
                 {

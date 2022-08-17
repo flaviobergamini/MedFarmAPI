@@ -142,7 +142,7 @@ namespace MedFarmAPI.Controllers
                 default:
                     return BadRequest(new MessageModel
                     {
-                        Code = "MFAPI4007",
+                        Code = "MFAPI4008",
                         Message = "Invalid category. Send only, Doctor or Drugstore"
                     });
                     break;

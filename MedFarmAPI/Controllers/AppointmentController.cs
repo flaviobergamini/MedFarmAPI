@@ -80,7 +80,7 @@ namespace MedFarmAPI.Controllers
         [HttpPost("doctor/confirmed")]
         public async Task<IActionResult> GetAppointmentConfirmedAsync(
             [FromServices] DataContext context,
-            [FromBody] AppointmentDoctorRequest appointmentDoctorRequest,
+            [FromBody] AppointmentConfirmedRequest appointmentConfirmedRequest,
             CancellationToken cancellationToken)
         {
             if (!ModelState.IsValid)
@@ -93,17 +93,17 @@ namespace MedFarmAPI.Controllers
             try
             {
                 var appointments = await (from ap in context.Appointments.Include(a => a.Doctor).Include(b => b.Client)
-                                    where ap.Confirmed == true && ap.Doctor.Id == appointmentDoctorRequest.Id
+                                    where ap.Confirmed == true && ap.Doctor.Id == appointmentConfirmedRequest.Id
                                           select ap).ToListAsync();
 
-                List<AppointmentDoctorResponse> listAppointments = new List<AppointmentDoctorResponse>();
-                AppointmentDoctorResponse appointmentDoctor;
+                List<AppointmentConfirmedResponse> listAppointments = new List<AppointmentConfirmedResponse>();
+                AppointmentConfirmedResponse appointmentDoctor;
 
                 foreach (var appointment in appointments)
                 {
-                   if ((appointment.DateTimeAppointment.ToString()).Substring(0, 10) == appointmentDoctorRequest.Date.ToString().Substring(0, 10))
+                   if ((appointment.DateTimeAppointment.ToString()).Substring(0, 10) == appointmentConfirmedRequest.Date.ToString().Substring(0, 10))
                     {
-                        appointmentDoctor = new AppointmentDoctorResponse();
+                        appointmentDoctor = new AppointmentConfirmedResponse();
                         appointmentDoctor.Name = appointment.Client.Name;
                         appointmentDoctor.Date = appointment.DateTimeAppointment;
                         appointmentDoctor.Remote = appointment.Remote;
@@ -139,12 +139,24 @@ namespace MedFarmAPI.Controllers
             {
                 var appointments = await (from ap in context.Appointments.Include(a => a.Doctor).Include(b => b.Client)
                                     where ap.Confirmed == false && ap.Doctor.Id == id
-                                    select ap.Client.Name).ToListAsync();
+                                    select ap).ToListAsync();
+
+                List<AppointmentPendingResponse> listAppointments = new List<AppointmentPendingResponse>();
+                AppointmentPendingResponse appointmentPendingResponse;
+
+                foreach(var appointment in appointments)
+                {
+                    appointmentPendingResponse = new AppointmentPendingResponse();
+                    appointmentPendingResponse.Id = appointment.Id;
+                    appointmentPendingResponse.Name = appointment.Client.Name;
+                    appointmentPendingResponse.Date = appointment.DateTimeAppointment;
+                    listAppointments.Add(appointmentPendingResponse);
+                }
 
                 return Ok(new
                 {
                     Code = "MFAPI2007",
-                    appointments = appointments
+                    appointments = listAppointments
                 });
             }
             catch
@@ -153,6 +165,43 @@ namespace MedFarmAPI.Controllers
                 {
                     Code = "MFAPI50013",
                     Message = "Internal server error when fetching a appointment"
+                });
+            }
+        }
+
+        [Authorize(Roles = "Doctor")]
+        [HttpPatch("doctor/requests/{id:int}")]
+        public async Task<IActionResult> PatchAppointmentAsync(
+            [FromServices] DataContext context,
+            [FromRoute] int id,
+            CancellationToken cancellationToken)
+        {
+            try
+            {
+                var appointment = await context.Appointments.FirstOrDefaultAsync(x => x.Id == id);
+                if (appointment == null)
+                {
+                    return NotFound(new MessageModel
+                    {
+                        Code = "MFAPI40413",
+                        Message = "Appointment not found in Database, Invalid ID"
+                    });
+                }
+                appointment.Confirmed = true;
+                context.Appointments.Update(appointment);
+                await context.SaveChangesAsync();
+                return Ok(new MessageModel
+                {
+                    Code = "MFAPI2007",
+                    Message = "Confirmation done"
+                });
+            }
+            catch
+            {
+                return StatusCode(500, new MessageModel
+                {
+                    Code = "MFAPI50014",
+                    Message = "Internal server error when updating an appointment"
                 });
             }
         }

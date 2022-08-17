@@ -41,6 +41,7 @@ namespace MedFarmAPI.Controllers
                 Cep = client.Cep,
                 Street = client.Street,
                 StreetNumber = client.StreetNumber,
+                District = client.District,
                 Password = PasswordHasher.Hash(client.Password),
                 RefreshToken = Convert.ToBase64String((Guid.NewGuid()).ToByteArray()),
             Roles = client.Roles
@@ -120,6 +121,7 @@ namespace MedFarmAPI.Controllers
                 Cep = doctor.Cep,
                 Street = doctor.Street,
                 StreetNumber = doctor.StreetNumber,
+                District = doctor.District,
                 Password = PasswordHasher.Hash(doctor.Password),
                 RefreshToken = Convert.ToBase64String((Guid.NewGuid()).ToByteArray()),
                 Roles = doctor.Roles,
@@ -202,6 +204,7 @@ namespace MedFarmAPI.Controllers
                 Cep = drugstore.Cep,
                 Street = drugstore.Street,
                 StreetNumber = drugstore.StreetNumber,
+                District = drugstore.District,
                 Password = PasswordHasher.Hash(drugstore.Password),
                 RefreshToken = Convert.ToBase64String((Guid.NewGuid()).ToByteArray()),
                 Roles = drugstore.Roles

@@ -1,5 +1,6 @@
 ﻿using MedFarmAPI.Data;
 using MedFarmAPI.MessageResponseModel;
+using MedFarmAPI.MessageResponseModel.AppointmentDoctorResponse;
 using MedFarmAPI.Models;
 using MedFarmAPI.ValidateModels;
 using Microsoft.AspNetCore.Authorization;
@@ -9,11 +10,11 @@ using Microsoft.EntityFrameworkCore;
 namespace MedFarmAPI.Controllers
 {
     [ApiController]
-    [Route("v1/[controller]")]
+    [Route("v1/appointment")]
     public class AppointmentController:ControllerBase
     {
         [Authorize(Roles = "Client")]
-        [HttpPost("appointment")]
+        [HttpPost("client")]
         public async Task<IActionResult> PostAsync(
             [FromBody] AppointmentValidateModel appointment, 
             [FromServices] DataContext context,
@@ -74,21 +75,75 @@ namespace MedFarmAPI.Controllers
             }
         }
 
-        [HttpGet("appointment")]
-        public async Task<IActionResult> GetAsync([FromServices] DataContext context)
+        [Authorize(Roles = "Doctor")]
+        [HttpGet("doctor/confirmed/{id:int}")]
+        public async Task<IActionResult> GetAppointmentConfirmedAsync(
+            [FromServices] DataContext context,
+            [FromRoute] int id,
+            CancellationToken cancellationToken)
         {
             try
             {
-                var appointments = await context.Appointments.AsNoTracking().ToListAsync();
+                var appointments = (from ap in context.Appointments.Include(a => a.Doctor).Include(b => b.Client)
+                                    where ap.Confirmed == true && ap.Doctor.Id == id
+                                    select ap);
 
-                if (appointments == null)
-                    return NotFound();
+                List<AppointmentDoctorResponse> listAppointments = new List<AppointmentDoctorResponse>();
+                AppointmentDoctorResponse appointmentDoctor;
 
-                return Ok(appointments);
+                foreach (var appointment in appointments)
+                {
+                    appointmentDoctor = new AppointmentDoctorResponse();
+                    appointmentDoctor.Name = appointment.Client.Name;
+                    appointmentDoctor.Date = appointment.DateTimeAppointment;
+                    appointmentDoctor.Remote = appointment.Remote;
+                    listAppointments.Add(appointmentDoctor);
+                    
+                }
+
+                return Ok(new
+                {
+                    Code = "MFAPI2006",
+                    appointments = listAppointments
+                });
             }
             catch
             {
-                return StatusCode(500, "MFAPI5002 - Erro interno no servidor ao buscar cliente");
+                return StatusCode(500, new MessageModel
+                {
+                    Code = "MFAPI50012",
+                    Message = "Internal server error when fetching a appointment"
+                });
+            }
+
+        }
+
+        [Authorize(Roles = "Doctor")]
+        [HttpGet("doctor/pending/{id:int}")]
+        public async Task<IActionResult> GetAppointmentAsync(
+            [FromServices] DataContext context,
+            [FromRoute] int id,
+            CancellationToken cancellationToken)
+        {
+            try
+            {
+                var appointments = (from ap in context.Appointments.Include(a => a.Doctor).Include(b => b.Client)
+                                    where ap.Confirmed == false && ap.Doctor.Id == id
+                                    select ap.Client.Name);
+
+                return Ok(new
+                {
+                    Code = "MFAPI2007",
+                    appointments = appointments
+                });
+            }
+            catch
+            {
+                return StatusCode(500, new MessageModel
+                {
+                    Code = "MFAPI50013",
+                    Message = "Internal server error when fetching a appointment"
+                });
             }
         }
     }

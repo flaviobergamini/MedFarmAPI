@@ -330,6 +330,7 @@ namespace MedFarmAPI.Controllers
                 var token = tokenService.GenerateDoctorToken(user);
                 return Ok(new LoginResponse
                 {
+                    Code = "MFAPI20010",
                     AccessToken = token,
                     RefreshToken = user.RefreshToken,
                     Id = user.Id
@@ -373,6 +374,7 @@ namespace MedFarmAPI.Controllers
                 var token = tokenService.GenerateDrugstoreToken(user);
                 return Ok(new LoginResponse
                 {
+                    Code = "MFAPI20011",
                     AccessToken = token,
                     RefreshToken = user.RefreshToken,
                     Id = user.Id

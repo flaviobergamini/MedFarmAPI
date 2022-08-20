@@ -60,7 +60,7 @@ namespace MedFarmAPI.Controllers
                 await context.SaveChangesAsync();
                 return StatusCode(201, new AppointmentResponse
                 {
-                    Code = "MFAPI2012",
+                    Code = "MFAPI2014",
                     Id = model.Id,
                     ClientId = model.Client.Id,
                     DoctorId = model.Doctor.Id
@@ -192,7 +192,7 @@ namespace MedFarmAPI.Controllers
                 await context.SaveChangesAsync();
                 return Ok(new MessageModel
                 {
-                    Code = "MFAPI2007",
+                    Code = "MFAPI20013",
                     Message = "Confirmation done"
                 });
             }

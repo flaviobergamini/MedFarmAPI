@@ -45,13 +45,13 @@ namespace MedFarmAPI.Controllers
                         Message = "Client not found in Database, Invalid ID"
                     });
 
-                var appointments = (from ap in context.Appointments.Include(a => a.Doctor).Include(b => b.Client)
+                var appointments = await (from ap in context.Appointments.Include(a => a.Doctor).Include(b => b.Client)
                                     where ap.Client.Id == clients.Id || ap.Client.RefreshToken == clients.RefreshToken
-                                    select ap);
+                                    select ap).ToListAsync();
 
-                var orders = (from order in context.Orders.Include(a => a.Drugstores).Include(b => b.Client)
+                var orders = await (from order in context.Orders.Include(a => a.Drugstores).Include(b => b.Client)
                               where order.Client.Id == clients.Id || order.Client.RefreshToken == clients.RefreshToken
-                              select order);
+                              select order).ToListAsync();
 
                 ClientLoggedDoctorResponse doctorResponse;
                 ClientLoggedOrderResponse orderResponse;
@@ -119,8 +119,8 @@ namespace MedFarmAPI.Controllers
                             Message = "Invalid Specialty"
                         });
 
-                    var doctors = context.Doctors?.AsNoTracking()
-                    .Where(x => x.Specialty == clientSearchRequest.Specialty && x.City == clientSearchRequest.City).ToList();
+                    var doctors = await context.Doctors?.AsNoTracking()
+                    .Where(x => x.Specialty == clientSearchRequest.Specialty && x.City == clientSearchRequest.City).ToListAsync();
                     return Ok(new
                     {
                         Code = "MFAPI2002",
@@ -130,7 +130,7 @@ namespace MedFarmAPI.Controllers
                     break;
 
                 case "Drugstore":
-                    var drugstores = context.Drugstores.AsNoTracking().Where(x => x.City == clientSearchRequest.City);
+                    var drugstores = await context.Drugstores.AsNoTracking().Where(x => x.City == clientSearchRequest.City).ToListAsync();
                     return Ok(new
                     {
                         Code = "MFAPI2003",

@@ -1,5 +1,6 @@
 ﻿using MedFarmAPI.Data;
 using MedFarmAPI.MessageResponseModel;
+using MedFarmAPI.MessageResponseModel.OrderDrugstoreResponse;
 using MedFarmAPI.Models;
 using MedFarmAPI.ValidateModels;
 using Microsoft.AspNetCore.Authorization;
@@ -9,11 +10,11 @@ using Microsoft.EntityFrameworkCore;
 namespace MedFarmAPI.Controllers
 {
     [ApiController]
-    [Route("v1/[controller]")]
+    [Route("v1/order")]
     public class OrderController:ControllerBase
     {
         [Authorize(Roles = "Client")]
-        [HttpPost("order")]
+        [HttpPost("client")]
         public async Task<IActionResult> PostAsync(
             [FromBody] OrderValidateModel order,
             [FromServices] DataContext context,
@@ -81,21 +82,127 @@ namespace MedFarmAPI.Controllers
             }
         }
 
-        [HttpGet("order")]
-        public async Task<IActionResult> GetAsync([FromServices] DataContext context)
+        [Authorize(Roles = "Drugstore")]
+        [HttpGet("drugstore/{id:int}")]
+        public async Task<IActionResult> GetOrderFalseAsync(
+            [FromRoute] int id,
+            [FromServices] DataContext context,
+            CancellationToken cancellationToken)
         {
             try
             {
-                var orders = await context.Orders.AsNoTracking().ToListAsync();
+                var orders = await (from order in context.Orders.Include(a => a.Drugstores).Include(b => b.Client)
+                                          where order.Confirmed == false && order.Drugstores.Id == id
+                                          select order).ToListAsync();
 
-                if (orders == null)
-                    return NotFound();
+                List<OrderPendingResponse> listOrders = new List<OrderPendingResponse>();
+                OrderPendingResponse orderPendingResponse;
 
-                return Ok(orders);
+                foreach (var order in orders)
+                {
+                    orderPendingResponse = new OrderPendingResponse();
+                    orderPendingResponse.Id = order.Id;
+                    orderPendingResponse.Name = order.Client.Name;
+                    listOrders.Add(orderPendingResponse);
+                }
+
+                return Ok(new
+                {
+                    Code = "MFAPI2008",
+                    appointments = listOrders
+                });
             }
             catch
             {
-                return StatusCode(500, "MFAPI5002 - Erro interno no servidor ao buscar cliente");
+                return StatusCode(500, new MessageModel
+                {
+                    Code = "MFAPI50014",
+                    Message = "Internal server error when fetching a orders"
+                });
+            }
+        }
+
+        [Authorize(Roles = "Drugstore")]
+        [HttpPatch("drugstore/order/{id:int}")]
+        public async Task<IActionResult> PatchOrderAsync(
+            [FromServices] DataContext context,
+            [FromRoute] int id,
+            CancellationToken cancellationToken)
+        {
+            try
+            {
+                var order = await context.Orders.FirstOrDefaultAsync(x => x.Id == id);
+                if (order == null)
+                {
+                    return NotFound(new MessageModel
+                    {
+                        Code = "MFAPI40414",
+                        Message = "Order not found in Database, Invalid ID"
+                    });
+                }
+                order.Confirmed = true;
+                context.Orders.Update(order);
+                await context.SaveChangesAsync();
+                return Ok(new MessageModel
+                {
+                    Code = "MFAPI2009",
+                    Message = "Confirmation done"
+                });
+            }
+            catch
+            {
+                return StatusCode(500, new MessageModel
+                {
+                    Code = "MFAPI50016",
+                    Message = "Internal server error when updating an order"
+                });
+            }
+        }
+
+        [Authorize(Roles = "Drugstore")]
+        [HttpGet("drugstore/order/{id:int}")]
+        public async Task<IActionResult> GetOrderConfirmedAsync(
+            [FromRoute] int id,
+            [FromServices] DataContext context,
+            CancellationToken cancellationToken)
+        {
+            try
+            {
+                var order = await (from o in context.Orders.Include(b => b.Client)
+                                    where o.Confirmed == true && o.Id == id
+                                    select o).ToListAsync();
+
+                if(order == null)
+                {
+                    return NotFound(new MessageModel
+                    {
+                        Code = "MFAPI40415",
+                        Message = "Order not found"
+                    });
+                }
+
+                OrderClientResponse orderClientResponse = new OrderClientResponse();
+                orderClientResponse.Id = order[0].Id;
+                orderClientResponse.Name = order[0].Client.Name;
+                orderClientResponse.Street = order[0].Client.Street;
+                orderClientResponse.District = order[0].Client.District;
+                orderClientResponse.City = order[0].Client.City;
+                orderClientResponse.StreetNumber = order[0].Client.StreetNumber;
+                orderClientResponse.Image = order[0].Image;
+
+                return Ok(new
+                {
+                    Code = "MFAPI2009",
+                    appointments = orderClientResponse
+                });
+            }
+            catch
+            {
+                return StatusCode(500, new MessageModel
+                {
+                    Code = "MFAPI50015",
+                    Message = "Internal server error when fetching a order"
+                });
             }
         }
     }

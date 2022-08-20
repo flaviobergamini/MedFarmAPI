@@ -200,7 +200,7 @@ namespace MedFarmAPI.Controllers
             {
                 return StatusCode(500, new MessageModel
                 {
-                    Code = "MFAPI50014",
+                    Code = "MFAPI50017",
                     Message = "Internal server error when updating an appointment"
                 });
             }

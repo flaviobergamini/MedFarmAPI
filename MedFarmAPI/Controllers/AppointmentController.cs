@@ -165,7 +165,6 @@ namespace MedFarmAPI.Controllers
 
                 List<string> appointmentDateTimePending = new List<string>();
                 string appointmentDate, appointmentTime;
-                int dayAppointment, monthAppointment, yearAppointment;
 
                 foreach (var date in dateWeek)
                 {

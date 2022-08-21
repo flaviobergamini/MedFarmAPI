@@ -70,8 +70,8 @@ namespace MedFarmAPI.Controllers
             {
                 return StatusCode(500, new MessageModel
                 {
-                    Code = "MFAPI5000",
-                    Message = "Internal server error when saving query"
+                    Code = "MFAPI50018",
+                    Message = "Internal server error when search appointment"
                 });
             }
         }
@@ -186,13 +186,7 @@ namespace MedFarmAPI.Controllers
 
                 return Ok(new
                 {
-                    dateTimeBrazil = dateTimeBrazil,
-                    year = year,
-                    month = month,
-                    day = day,
-                    numberDay = numberDay,
-                    dateWeek = dateWeek,
-                    dayTime = dayTime,
+                    Code = "MFAPI20014",
                     appointmentDateTimePending = appointmentDateTimePending
                 }); ;
             }

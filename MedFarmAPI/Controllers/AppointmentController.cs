@@ -76,6 +76,136 @@ namespace MedFarmAPI.Controllers
             }
         }
 
+        [Authorize(Roles = "Client")]
+        [HttpGet("client/doctor/datetime/{id:int}")]
+        public async Task<IActionResult> GetAsync(
+            [FromRoute] int id,
+            [FromServices] DataContext context,
+            CancellationToken cancellationToken
+            )
+        {
+            try
+            {
+                var appointments = await (from ap in context.Appointments.Include(a => a.Doctor).Include(b => b.Client)
+                                          where ap.Confirmed == true && ap.Doctor.Id == id
+                                          select ap).ToListAsync();
+
+                List<string> dayTime = new List<string>();
+                List<string> dateWeek = new List<string>();
+                string timeString;
+                string dateString = "";
+
+                var dateTimeUtc = DateTime.UtcNow;
+                var brasilia = TimeZoneInfo.FindSystemTimeZoneById("Brazil/East");
+                var dateTimeBrazil = String.Format(TimeZoneInfo.ConvertTimeFromUtc(dateTimeUtc, brasilia).ToString());
+
+                int day = int.Parse(dateTimeBrazil.Substring(0, 2));
+                int month = int.Parse(dateTimeBrazil.Substring(3, 2));
+                int year = int.Parse(dateTimeBrazil.Substring(6, 4));
+
+                DateTime dateTime = new DateTime(year, month, day);
+                DateTime dateTimeVerify;
+
+                int numberDay = (int)dateTime.DayOfWeek;
+                int dayAccount, dayVerify;
+                short Sunday = 0, Monday = 1, Saturday = 6;
+
+                if (numberDay > Sunday && numberDay < Saturday)
+                {
+                    dayAccount = 0;
+                    for (var i = Monday; i < Saturday; i++)
+                    {
+                        dateTimeVerify = new DateTime(year, month, day+dayAccount);
+                        dayVerify = (int)dateTimeVerify.DayOfWeek;
+                        if (dayVerify > Sunday && dayVerify < Saturday)
+                        {
+                            if (month < 10)
+                                if (day < 10)
+                                    dateString = $"0{day+dayAccount}/0{month}/{year}";
+                                else
+                                    dateString = $"{day+dayAccount}/0{month}/{year}";
+                            else
+                                if (day < 10)
+                                dateString = $"0{day+dayAccount}/{month}/{year}";
+                            else
+                                dateString = $"{day+dayAccount}/{month}/{year}";
+                            dateWeek.Add(dateString);
+                            dayAccount++;
+                        }
+                    }
+                }
+                else
+                {
+                    dayAccount = Monday;
+                    for (var i = Monday; i < Saturday; i++)
+                    {
+                        if (month < 10)
+                            if (day < 10)
+                                dateString = $"0{day+dayAccount}/0{month}/{year}";
+                            else
+                                dateString = $"{day+dayAccount}/0{month}/{year}";
+                        else
+                            if (day < 10)
+                            dateString = $"0{day+dayAccount}/{month}/{year}";
+                        else
+                            dateString = $"{day+dayAccount}/{month}/{year}";
+                        dateWeek.Add(dateString);
+                        dayAccount++;
+                    }
+                }
+
+                for (var i = 8; i < 19; i++)
+                {
+                        if(i < 10)
+                            timeString = $"0{i}:00";
+                        else
+                            timeString = $"{i}:00";
+                        dayTime.Add(timeString);
+                }
+
+                List<string> appointmentDateTimePending = new List<string>();
+                string appointmentDate, appointmentTime;
+                int dayAppointment, monthAppointment, yearAppointment;
+
+                foreach (var date in dateWeek)
+                {
+                    foreach(var time in dayTime)
+                    {
+                        appointmentDateTimePending.Add($"{date} {time}");
+                    }
+                }
+
+                foreach (var appointment in appointments)
+                {
+                    appointmentDate = appointment.DateTimeAppointment.ToString().Substring(0, 10);
+                    appointmentTime = appointment.DateTimeAppointment.ToString().Substring(11, 5);
+
+                    appointmentDateTimePending.Remove($"{appointmentDate} {appointmentTime}");
+                }
+
+
+                return Ok(new
+                {
+                    dateTimeBrazil = dateTimeBrazil,
+                    year = year,
+                    month = month,
+                    day = day,
+                    numberDay = numberDay,
+                    dateWeek = dateWeek,
+                    dayTime = dayTime,
+                    appointmentDateTimePending = appointmentDateTimePending
+                }); ;
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new MessageModel
+                {
+                    Code = "MFAPI5000",
+                    Message = "Internal server error when saving query"
+                });
+            }
+        }
+
         [Authorize(Roles = "Doctor")]
         [HttpPost("doctor/confirmed")]
         public async Task<IActionResult> GetAppointmentConfirmedAsync(

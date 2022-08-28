@@ -102,7 +102,10 @@ namespace MedFarmAPI.Controllers
                 int day = int.Parse(dateTimeBrazil.Substring(0, 2));
                 int month = int.Parse(dateTimeBrazil.Substring(3, 2));
                 int year = int.Parse(dateTimeBrazil.Substring(6, 4));
+                int hour = int.Parse(dateTimeBrazil.Substring(11, 2));
 
+                DateTime lastDay = new DateTime(year, month, DateTime.DaysInMonth(year, month));
+                    
                 DateTime dateTime = new DateTime(year, month, day);
                 DateTime dateTimeVerify;
 
@@ -115,22 +118,59 @@ namespace MedFarmAPI.Controllers
                     dayAccount = 0;
                     for (var i = Monday; i < Saturday; i++)
                     {
-                        dateTimeVerify = new DateTime(year, month, day+dayAccount);
-                        dayVerify = (int)dateTimeVerify.DayOfWeek;
-                        if (dayVerify > Sunday && dayVerify < Saturday)
+                        try
                         {
-                            if (month < 10)
-                                if (day < 10)
-                                    dateString = $"0{day+dayAccount}/0{month}/{year}";
+                            dateTimeVerify = new DateTime(year, month, day+dayAccount);
+                            dayVerify = (int)dateTimeVerify.DayOfWeek;
+                            if (dayVerify > Sunday && dayVerify < Saturday)
+                            {
+                                if (month < 10)
+                                    if (day < 10)
+                                        dateString = $"0{day+dayAccount}/0{month}/{year}";
+                                    else
+                                        dateString = $"{day+dayAccount}/0{month}/{year}";
                                 else
-                                    dateString = $"{day+dayAccount}/0{month}/{year}";
-                            else
-                                if (day < 10)
-                                dateString = $"0{day+dayAccount}/{month}/{year}";
-                            else
-                                dateString = $"{day+dayAccount}/{month}/{year}";
-                            dateWeek.Add(dateString);
-                            dayAccount++;
+                                    if (day < 10)
+                                    dateString = $"0{day+dayAccount}/{month}/{year}";
+                                else
+                                    dateString = $"{day+dayAccount}/{month}/{year}";
+                                dateWeek.Add(dateString);
+                                if (day+dayAccount == lastDay.Day)
+                                {
+                                    day = 0;
+                                    month = month + 1;
+                                    dayAccount = Sunday;
+                                }
+                                dayAccount++;
+                            }
+                        }
+                        catch
+                        {
+                            dayAccount = 1;
+                            
+                            dateTimeVerify = new DateTime(year, month, day+dayAccount);
+                            dayVerify = (int)dateTimeVerify.DayOfWeek;
+                            if (dayVerify > Sunday && dayVerify < Saturday)
+                            {
+                                if (month < 10)
+                                    if (day < 10)
+                                        dateString = $"0{day+dayAccount}/0{month}/{year}";
+                                    else
+                                        dateString = $"{day+dayAccount}/0{month}/{year}";
+                                else
+                                    if (day < 10)
+                                    dateString = $"0{day+dayAccount}/{month}/{year}";
+                                else
+                                    dateString = $"{day+dayAccount}/{month}/{year}";
+                                dateWeek.Add(dateString);
+                                if (day+dayAccount == lastDay.Day)
+                                {
+                                    day = 0;
+                                    month = month + 1;
+                                    dayAccount = Sunday;
+                                }
+                                dayAccount++;
+                            }
                         }
                     }
                 }
@@ -139,6 +179,8 @@ namespace MedFarmAPI.Controllers
                     dayAccount = Monday;
                     for (var i = Monday; i < Saturday; i++)
                     {
+                        dateTimeVerify = new DateTime(year, month, day+dayAccount);
+                        dayVerify = (int)dateTimeVerify.DayOfWeek;
                         if (month < 10)
                             if (day < 10)
                                 dateString = $"0{day+dayAccount}/0{month}/{year}";
@@ -150,6 +192,12 @@ namespace MedFarmAPI.Controllers
                         else
                             dateString = $"{day+dayAccount}/{month}/{year}";
                         dateWeek.Add(dateString);
+                        if (day+dayAccount == lastDay.Day)
+                        {
+                            day = 0;
+                            month = month + 1;
+                            dayAccount = Sunday;
+                        }
                         dayAccount++;
                     }
                 }
@@ -170,7 +218,15 @@ namespace MedFarmAPI.Controllers
                 {
                     foreach(var time in dayTime)
                     {
-                        appointmentDateTimePending.Add($"{date} {time}");
+                        if (date.Substring(0, 2) == dateTimeBrazil.Substring(0, 2))
+                        {
+                            if(int.Parse(time.Substring(0,2)) >= hour)
+                                appointmentDateTimePending.Add($"{date} {time}");
+                        }
+                        else
+                        {
+                            appointmentDateTimePending.Add($"{date} {time}");
+                        }
                     }
                 }
 

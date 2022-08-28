@@ -25,8 +25,8 @@ namespace MedFarmAPI.Services
                     AuthTokenAsyncFactory = () => Task.FromResult(a.FirebaseToken),
                     ThrowOnCancel = true,
                 })
-                    .Child("data")
-                    .Child($"{formFile.FileName}.png")
+                    .Child("dataOrdersClient")
+                    .Child($"{Guid.NewGuid()}.png")
                     .PutAsync(formFile.OpenReadStream());
 
                 // Track progress of the upload

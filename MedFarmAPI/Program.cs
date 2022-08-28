@@ -33,7 +33,7 @@ app.MapControllers();
 app.Run();
 
 
-// buscando credenciais para JWT e serviço de e-mail
+// buscando credenciais para JWT, serviço de e-mail e storage no Firebase
 void LoadConfiguration(WebApplication app)
 {
     Configuration.JwtKey = app.Configuration.GetValue<string>("JwtKey");
@@ -41,6 +41,10 @@ void LoadConfiguration(WebApplication app)
     var smtp = new Configuration.SmtpConfiguration();
     app.Configuration.GetSection("Smtp").Bind(smtp);
     Configuration.Smtp = smtp;
+
+    var firebaseStorage = new Configuration.FirebaseConfiguration();
+    app.Configuration.GetSection("FirebaseStorage").Bind(firebaseStorage);
+    Configuration.Firebase = firebaseStorage;
 }
 
 // Configurando Autenticação na API
@@ -81,6 +85,7 @@ void ConfigureServices(WebApplicationBuilder builder)
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();
+    //builder.Services.AddAWSService<IAmazonS3>();
     builder.Services.AddSwaggerGen(c =>
     {
         c.SwaggerDoc("v1", new OpenApiInfo { Title = "MedFarm Api", Version = "v1" });

@@ -2,6 +2,7 @@
 using MedFarmAPI.MessageResponseModel;
 using MedFarmAPI.MessageResponseModel.OrderDrugstoreResponse;
 using MedFarmAPI.Models;
+using MedFarmAPI.Services;
 using MedFarmAPI.ValidateModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,6 +14,35 @@ namespace MedFarmAPI.Controllers
     [Route("v1/order")]
     public class OrderController:ControllerBase
     {
+        private static string imageFirebaseStorage = null;
+
+        [Authorize(Roles = "Client")]
+        [HttpPost("client/upload/image")]
+        public async Task<IActionResult> PostTesteAsync(
+           IFormFile formFile,
+           CancellationToken cancellationToken)
+        {
+            FirebaseStorageService FirebaseService = new FirebaseStorageService();
+            imageFirebaseStorage = await FirebaseService.SendImage(formFile);
+
+            if (imageFirebaseStorage != null)
+            {
+                return StatusCode(201, new
+                {
+                    Code = "MFAPI2015",
+                    ImageFirebaseStorage = imageFirebaseStorage
+                });
+            }
+            else
+            {
+                return StatusCode(500, new MessageModel
+                {
+                    Code = "MFAPI50019",
+                    Message = "Could not upload image to Firebase"
+                });
+            }
+        }
+
         [Authorize(Roles = "Client")]
         [HttpPost("client")]
         public async Task<IActionResult> PostAsync(
@@ -46,7 +76,7 @@ namespace MedFarmAPI.Controllers
 
             var model = new Order
             {
-                Image = order.Image,
+                Image = imageFirebaseStorage,
                 State = order.State,
                 City = order.City,
                 Complement = order.Complement,
@@ -60,6 +90,7 @@ namespace MedFarmAPI.Controllers
                 Drugstores = drugstore,
             };
 
+            imageFirebaseStorage = null;
             try
             {
                 await context.Orders.AddAsync(model);

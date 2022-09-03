@@ -23,12 +23,15 @@ app.UseSwaggerUI();
 //app.UseStaticFiles();    // Suporte para arquivos estáticos, HTML, CSS, JS, imagens...
 
 app.UseHttpsRedirection();
+app.UseStaticFiles();
+app.UseRouting();
 
 // Habilitando a autenticação e a autorização para login
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapRazorPages();
 
 app.Run();
 
@@ -82,6 +85,7 @@ void ConfigureMvc(WebApplicationBuilder builder)
 void ConfigureServices(WebApplicationBuilder builder)
 {
     builder.Services.AddRazorPages();
+    builder.Services.AddHttpContextAccessor();
 
     // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
     builder.Services.AddEndpointsApiExplorer();

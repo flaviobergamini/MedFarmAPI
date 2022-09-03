@@ -4,6 +4,7 @@ using MedFarmAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MedFarmAPI.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220816022519_CreatePaymentAttributeInTableOrder")]
+    partial class CreatePaymentAttributeInTableOrder
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -397,10 +399,6 @@ namespace MedFarmAPI.Migrations
                         .HasMaxLength(300)
                         .HasColumnType("NVARCHAR(300)")
                         .HasColumnName("Complement");
-
-                    b.Property<bool>("Confirmed")
-                        .HasColumnType("BIT")
-                        .HasColumnName("Confirmed");
 
                     b.Property<DateTime>("DateTimeOrder")
                         .HasColumnType("DATETIME")

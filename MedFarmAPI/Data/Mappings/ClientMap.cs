@@ -55,6 +55,12 @@ namespace MedFarmAPI.Data.Mappings
             .HasColumnType("NVARCHAR")
             .HasMaxLength(300);
 
+            builder.Property(x => x.District)
+            .IsRequired(true)
+            .HasColumnName("District")
+            .HasColumnType("NVARCHAR")
+            .HasMaxLength(300);
+
             builder.Property(x => x.Cep)
             .IsRequired()
             .HasColumnName("Cep")
@@ -89,6 +95,12 @@ namespace MedFarmAPI.Data.Mappings
             .HasColumnName("Roles")
             .HasColumnType("NVARCHAR")
             .HasMaxLength(20);
+
+            builder.Property(x => x.RefreshToken)
+            .IsRequired()
+            .HasColumnName("RefreshToken")
+            .HasColumnType("NVARCHAR")
+            .HasMaxLength(1000);
         }
     }
 }

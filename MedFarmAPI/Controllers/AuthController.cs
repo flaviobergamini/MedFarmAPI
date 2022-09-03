@@ -14,7 +14,7 @@ namespace MedFarmAPI.Controllers
     [Route("v1/auth")]
     public class AuthController:ControllerBase
     {
-        [HttpPost("create-client")]
+        [HttpPost("create/client")]
         public async Task<IActionResult> PostClientAsync(
             [FromBody] ClientValidateModel client,
             [FromServices] EmailService emailService,
@@ -41,8 +41,10 @@ namespace MedFarmAPI.Controllers
                 Cep = client.Cep,
                 Street = client.Street,
                 StreetNumber = client.StreetNumber,
+                District = client.District,
                 Password = PasswordHasher.Hash(client.Password),
-                Roles = client.Roles
+                RefreshToken = Convert.ToBase64String((Guid.NewGuid()).ToByteArray()),
+            Roles = client.Roles
             };
             try
             {
@@ -57,7 +59,13 @@ namespace MedFarmAPI.Controllers
                 {
                     await context.Clients.AddAsync(model);
                     await context.SaveChangesAsync();
-                    return Created($"v1/create-client/{model.Id}", model);
+                    return StatusCode(201, new SignUpResponse
+                    {
+                        Code = "MFAPI2010",
+                        Id = model.Id,
+                        Name = model.Name,
+                        RefreshToken = model.RefreshToken
+                    });
                 }
                 else
                 {
@@ -86,7 +94,7 @@ namespace MedFarmAPI.Controllers
             }
         }
 
-        [HttpPost("create-doctor")]
+        [HttpPost("create/doctor")]
         public async Task<IActionResult> PostDoctorAsync(
             [FromBody] DoctorValidateModel doctor,
             [FromServices] EmailService emailService,
@@ -113,7 +121,9 @@ namespace MedFarmAPI.Controllers
                 Cep = doctor.Cep,
                 Street = doctor.Street,
                 StreetNumber = doctor.StreetNumber,
+                District = doctor.District,
                 Password = PasswordHasher.Hash(doctor.Password),
+                RefreshToken = Convert.ToBase64String((Guid.NewGuid()).ToByteArray()),
                 Roles = doctor.Roles,
                 Specialty = doctor.Specialty,
                 RegionalCouncil = doctor.RegionalCouncil
@@ -132,7 +142,13 @@ namespace MedFarmAPI.Controllers
                 {
                     await context.Doctors.AddAsync(model);
                     await context.SaveChangesAsync();
-                    return Created($"v1/create-doctor/{model.Id}", model);
+                    return StatusCode(201, new SignUpResponse
+                    {
+                        Code = "MFAPI2011",
+                        Id = model.Id,
+                        Name = model.Name,
+                        RefreshToken = model.RefreshToken
+                    });
                 }
                 else
                 {
@@ -161,7 +177,7 @@ namespace MedFarmAPI.Controllers
             }
         }
 
-        [HttpPost("create-drugstore")]
+        [HttpPost("create/drugstore")]
         public async Task<IActionResult> PostDrugstoreAsync(
             [FromBody] DrugstoreValidateModel drugstore,
             [FromServices] EmailService emailService,
@@ -188,7 +204,9 @@ namespace MedFarmAPI.Controllers
                 Cep = drugstore.Cep,
                 Street = drugstore.Street,
                 StreetNumber = drugstore.StreetNumber,
+                District = drugstore.District,
                 Password = PasswordHasher.Hash(drugstore.Password),
+                RefreshToken = Convert.ToBase64String((Guid.NewGuid()).ToByteArray()),
                 Roles = drugstore.Roles
             };
             try
@@ -204,7 +222,13 @@ namespace MedFarmAPI.Controllers
                 {
                     await context.Drugstores.AddAsync(model);
                     await context.SaveChangesAsync();
-                    return Created($"v1/create-drugstore/{model.Id}", model);
+                    return StatusCode(201, new SignUpResponse
+                    {
+                        Code = "MFAPI2012",
+                        Id = model.Id,
+                        Name = model.Name,
+                        RefreshToken = model.RefreshToken
+                    });
                 }
                 else
                 {
@@ -234,7 +258,7 @@ namespace MedFarmAPI.Controllers
         }
 
 
-        [HttpPost("login-client")]
+        [HttpPost("login/client")]
         public async Task<IActionResult> LoginClientAsync(
             [FromBody] LoginValidateModel loginValidateModel, 
             [FromServices] DataContext context, 
@@ -260,7 +284,13 @@ namespace MedFarmAPI.Controllers
             try
             {
                 var token = tokenService.GenerateClientToken(user);
-                return Ok(token);
+                return Ok(new LoginResponse
+                {
+                    Code = "MFAPI2003",
+                    AccessToken = token,
+                    RefreshToken = user.RefreshToken,
+                    Id = user.Id
+                });
             }
             catch (Exception ex)
             {
@@ -272,7 +302,7 @@ namespace MedFarmAPI.Controllers
             }
         }
 
-        [HttpPost("login-doctor")]
+        [HttpPost("login/doctor")]
         public async Task<IActionResult> LoginDoctorAsync(
             [FromBody] LoginValidateModel loginValidateModel,
             [FromServices] DataContext context,
@@ -298,7 +328,13 @@ namespace MedFarmAPI.Controllers
             try
             {
                 var token = tokenService.GenerateDoctorToken(user);
-                return Ok(token);
+                return Ok(new LoginResponse
+                {
+                    Code = "MFAPI20010",
+                    AccessToken = token,
+                    RefreshToken = user.RefreshToken,
+                    Id = user.Id
+                });
             }
             catch (Exception ex)
             {
@@ -310,7 +346,7 @@ namespace MedFarmAPI.Controllers
             }
         }
 
-        [HttpPost("login-drugstore")]
+        [HttpPost("login/drugstore")]
         public async Task<IActionResult> LoginDrugstoreAsync(
             [FromBody] LoginValidateModel loginValidateModel,
             [FromServices] DataContext context,
@@ -336,7 +372,13 @@ namespace MedFarmAPI.Controllers
             try
             {
                 var token = tokenService.GenerateDrugstoreToken(user);
-                return Ok(token);
+                return Ok(new LoginResponse
+                {
+                    Code = "MFAPI20011",
+                    AccessToken = token,
+                    RefreshToken = user.RefreshToken,
+                    Id = user.Id
+                });
             }
             catch (Exception ex)
             {
@@ -347,10 +389,5 @@ namespace MedFarmAPI.Controllers
                 });
             }
         }
-
-
-        [Authorize(Roles = "Client")]
-        [HttpGet("client-test")]
-        public IActionResult GetUser(CancellationToken cancellationToken) => Ok("Client Logado");
     }
 }

@@ -4,6 +4,7 @@ using MedFarmAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MedFarmAPI.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20220816013952_CreateDistrictAttributeInTablesClientDoctorDrugstore")]
+    partial class CreateDistrictAttributeInTablesClientDoctorDrugstore
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -43,12 +45,6 @@ namespace MedFarmAPI.Migrations
 
                     b.Property<int>("DoctorId")
                         .HasColumnType("int");
-
-                    b.Property<string>("Payment")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("NVARCHAR(20)")
-                        .HasColumnName("Payment");
 
                     b.Property<bool>("Remote")
                         .HasColumnType("BIT")
@@ -100,9 +96,7 @@ namespace MedFarmAPI.Migrations
 
                     b.Property<string>("District")
                         .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("NVARCHAR(300)")
-                        .HasColumnName("District");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -398,19 +392,13 @@ namespace MedFarmAPI.Migrations
                         .HasColumnType("NVARCHAR(300)")
                         .HasColumnName("Complement");
 
-                    b.Property<bool>("Confirmed")
-                        .HasColumnType("BIT")
-                        .HasColumnName("Confirmed");
-
                     b.Property<DateTime>("DateTimeOrder")
                         .HasColumnType("DATETIME")
                         .HasColumnName("DateTimeOrder");
 
                     b.Property<string>("District")
                         .IsRequired()
-                        .HasMaxLength(300)
-                        .HasColumnType("NVARCHAR(300)")
-                        .HasColumnName("District");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("DrugstoresId")
                         .HasColumnType("int");
@@ -419,12 +407,6 @@ namespace MedFarmAPI.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT")
                         .HasColumnName("Image");
-
-                    b.Property<string>("Payment")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("NVARCHAR(20)")
-                        .HasColumnName("Payment");
 
                     b.Property<string>("State")
                         .IsRequired()

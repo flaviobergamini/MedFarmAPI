@@ -17,6 +17,11 @@ namespace MedFarmAPI.Data.Mappings
 
             //atributos da tabela
 
+            builder.Property(x => x.DateTimeOrder)
+            .IsRequired()
+            .HasColumnName("DateTimeOrder")
+            .HasColumnType("DATETIME");
+
             builder.Property(x => x.Image)
             .IsRequired()
             .HasColumnName("Image")
@@ -39,6 +44,12 @@ namespace MedFarmAPI.Data.Mappings
             .HasColumnType("NVARCHAR")
             .HasMaxLength(300);
 
+            builder.Property(x => x.District)
+            .IsRequired(true)
+            .HasColumnName("District")
+            .HasColumnType("NVARCHAR")
+            .HasMaxLength(300);
+
             builder.Property(x => x.Cep)
             .IsRequired()
             .HasColumnName("Cep")
@@ -55,6 +66,17 @@ namespace MedFarmAPI.Data.Mappings
             .HasColumnName("Street")
             .HasColumnType("NVARCHAR")
             .HasMaxLength(300);
+
+            builder.Property(x => x.Payment)
+            .IsRequired(true)
+            .HasColumnName("Payment")
+            .HasColumnType("NVARCHAR")
+            .HasMaxLength(20);
+
+            builder.Property(x => x.Confirmed)
+            .IsRequired()
+            .HasColumnName("Confirmed")
+            .HasColumnType("BIT");
 
             builder.HasOne(x => x.Client).WithMany(x => x.Orders)
                 .HasConstraintName("FK_Orders_Clients")

@@ -1,0 +1,14 @@
+body {
+    background: #0399BA;
+    color: #0399BA;
+    font-weight: bold;
+}
+
+form {
+    background: lightgray;
+}
+
+#btnUpdate {
+    color: #0399BA;
+    font-weight: bold;
+}

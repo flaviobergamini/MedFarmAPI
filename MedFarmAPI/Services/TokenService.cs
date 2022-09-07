@@ -79,5 +79,13 @@ namespace MedFarmAPI.Services
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
         }
+
+        public string ReadToken(string token)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var jwtSecurityToken = handler.ReadJwtToken(token);
+            string jti = jwtSecurityToken.Claims.First(claim => claim.Type == "id").Value;
+            return jti;
+        }
     }
 }

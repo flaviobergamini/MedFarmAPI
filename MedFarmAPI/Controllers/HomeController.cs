@@ -1,4 +1,4 @@
-﻿using MedFarmAPI.MessageResponseModel;
+﻿using MedFarmAPI.Response;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MedFarmAPI.Controllers

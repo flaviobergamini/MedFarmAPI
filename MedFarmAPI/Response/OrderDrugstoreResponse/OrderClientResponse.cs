@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MedFarmAPI.MessageResponseModel.OrderDrugstoreResponse
+namespace MedFarmAPI.Response.OrderDrugstoreResponse
 {
     public class OrderClientResponse
     {

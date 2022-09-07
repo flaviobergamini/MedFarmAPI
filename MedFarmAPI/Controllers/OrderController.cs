@@ -1,6 +1,6 @@
 ﻿using MedFarmAPI.Data;
-using MedFarmAPI.MessageResponseModel;
-using MedFarmAPI.MessageResponseModel.OrderDrugstoreResponse;
+using MedFarmAPI.Response;
+using MedFarmAPI.Response.OrderDrugstoreResponse;
 using MedFarmAPI.Models;
 using MedFarmAPI.Services;
 using MedFarmAPI.ValidateModels;

@@ -1,4 +1,4 @@
-﻿namespace MedFarmAPI.Models.ClientResquest
+﻿namespace MedFarmAPI.Request.ClientResquest
 {
     public class ClientHistoryRequest
     {

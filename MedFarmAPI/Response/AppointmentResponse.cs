@@ -1,10 +1,10 @@
-﻿namespace MedFarmAPI.MessageResponseModel
+﻿namespace MedFarmAPI.Response
 {
-    public class OrderResponse
+    public class AppointmentResponse
     {
         public string Code { get; set; } = null!;
         public int Id { get; set; }
         public int ClientId { get; set; }
-        public int DrugstoreId { get; set; }
+        public int DoctorId { get; set; }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MedFarmAPI.MessageResponseModel.ClientResponse.Model
+namespace MedFarmAPI.Response.ClientResponse.Model
 {
     public abstract class ClientLogged
     {

@@ -52,7 +52,7 @@ namespace MedFarmAPI.Controllers
                     model.Name,
                     model.Email,
                     "Bem vindo ao Med Farm!!!",
-                    viewBodyService.BodyEmailClient(model.Name)
+                    viewBodyService.BodyEmail(model.Name)
                     ); 
                
                 if (confirmEmail)
@@ -135,7 +135,7 @@ namespace MedFarmAPI.Controllers
                     model.Name,
                     model.Email,
                     "Bem vindo ao Med Farm!!!",
-                    viewBodyService.BodyEmailDoctor(model.Name)
+                    viewBodyService.BodyEmail(model.Name)
                     );
 
                 if (confirmEmail)
@@ -215,7 +215,7 @@ namespace MedFarmAPI.Controllers
                     model.Name,
                     model.Email,
                     "Bem vindo ao Med Farm!!!",
-                    viewBodyService.BodyEmailDrugstore(model.Name)
+                    viewBodyService.BodyEmail(model.Name)
                     );
 
                 if (confirmEmail)

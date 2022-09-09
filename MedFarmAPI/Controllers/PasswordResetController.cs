@@ -3,6 +3,7 @@ using MedFarmAPI.Request.PaswordResetRequest;
 using MedFarmAPI.Response;
 using MedFarmAPI.Services;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SecureIdentity.Password;
@@ -14,6 +15,8 @@ namespace MedFarmAPI.Controllers
     public class PasswordResetController : ControllerBase
     {
         //[Authorize(Roles = "Client")]
+        //[EnableCors]
+        [AllowAnonymous]
         [HttpPatch("client")]
         public async Task<IActionResult> PatchClientPasswordAsync(
             [FromBody] PasswordResetRequest passwordReset, 

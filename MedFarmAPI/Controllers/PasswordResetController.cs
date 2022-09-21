@@ -14,10 +14,10 @@ namespace MedFarmAPI.Controllers
     [Route("v1/password/reset")]
     public class PasswordResetController : ControllerBase
     {
-        //[Authorize(Roles = "Client")]
-        //[EnableCors]
+        private DecryptedTokenService? decryptedTokenService;
+
         [AllowAnonymous]
-        [HttpPatch("client")]
+        [HttpPatch("user")]
         public async Task<IActionResult> PatchClientPasswordAsync(
             [FromBody] PasswordResetRequest passwordReset, 
             [FromServices] TokenService tokenService,
@@ -33,45 +33,142 @@ namespace MedFarmAPI.Controllers
 
             try
             {
-                var id = int.Parse(tokenService.ReadToken(passwordReset.Token));
-                var user = await context.Clients.FirstOrDefaultAsync(x => x.Id == id);
+                decryptedTokenService = tokenService.ReadToken(passwordReset.Token);
+                if (decryptedTokenService.Role == "Client") 
+                { 
+                    var user = await context.Clients.FirstOrDefaultAsync(x => x.Id == decryptedTokenService.Id);
 
-                if(user == null)
-                {
-                    return NotFound(new MessageModel
+                    if (user == null)
                     {
-                        Code = "MFAPI40416",
-                        Message = "Client not found"
-                    });
-                }
-                if (passwordReset.NewPassword == passwordReset.ConfirmPassword)
-                {
-                    if(!PasswordHasher.Verify(user.Password, passwordReset.NewPassword))
-                    {
-                        user.Password = PasswordHasher.Hash(passwordReset.NewPassword);
-                        context.Clients.Update(user);
-                        await context.SaveChangesAsync();
-                        return Ok(new MessageModel
+                        return NotFound(new MessageModel
                         {
-                            Code = "MFAPI20015",
-                            Message = "Password updated successfully"
+                            Code = "MFAPI40416",
+                            Message = "User not found"
                         });
+                    }
+                    if (passwordReset.NewPassword == passwordReset.ConfirmPassword)
+                    {
+                        if (!PasswordHasher.Verify(user.Password, passwordReset.NewPassword))
+                        {
+                            user.Password = PasswordHasher.Hash(passwordReset.NewPassword);
+                            context.Clients.Update(user);
+                            await context.SaveChangesAsync();
+                            return Ok(new MessageModel
+                            {
+                                Code = "MFAPI20015",
+                                Message = "Password updated successfully"
+                            });
+                        }
+                        else
+                        {
+                            return BadRequest(new MessageModel
+                            {
+                                Code = "MFAPI40010",
+                                Message = "New password cannot be the same as the old one"
+                            });
+                        }
                     }
                     else
                     {
                         return BadRequest(new MessageModel
                         {
-                            Code = "MFAPI40010",
-                            Message = "New password cannot be the same as the old one"
+                            Code = "MFAPI40011",
+                            Message = "Passwords are not the same"
+                        });
+                    }
+                }
+                else if (decryptedTokenService.Role == "Doctor")
+                {
+                    var user = await context.Doctors.FirstOrDefaultAsync(x => x.Id == decryptedTokenService.Id);
+
+                    if (user == null)
+                    {
+                        return NotFound(new MessageModel
+                        {
+                            Code = "MFAPI40417",
+                            Message = "User not found"
+                        });
+                    }
+                    if (passwordReset.NewPassword == passwordReset.ConfirmPassword)
+                    {
+                        if (!PasswordHasher.Verify(user.Password, passwordReset.NewPassword))
+                        {
+                            user.Password = PasswordHasher.Hash(passwordReset.NewPassword);
+                            context.Doctors.Update(user);
+                            await context.SaveChangesAsync();
+                            return Ok(new MessageModel
+                            {
+                                Code = "MFAPI20016",
+                                Message = "Password updated successfully"
+                            });
+                        }
+                        else
+                        {
+                            return BadRequest(new MessageModel
+                            {
+                                Code = "MFAPI40011",
+                                Message = "New password cannot be the same as the old one"
+                            });
+                        }
+                    }
+                    else
+                    {
+                        return BadRequest(new MessageModel
+                        {
+                            Code = "MFAPI40012",
+                            Message = "Passwords are not the same"
+                        });
+                    }
+                }
+                else if (decryptedTokenService.Role == "Drugstore")
+                {
+                    var user = await context.Drugstores.FirstOrDefaultAsync(x => x.Id == decryptedTokenService.Id);
+
+                    if (user == null)
+                    {
+                        return NotFound(new MessageModel
+                        {
+                            Code = "MFAPI40418",
+                            Message = "User not found"
+                        });
+                    }
+                    if (passwordReset.NewPassword == passwordReset.ConfirmPassword)
+                    {
+                        if (!PasswordHasher.Verify(user.Password, passwordReset.NewPassword))
+                        {
+                            user.Password = PasswordHasher.Hash(passwordReset.NewPassword);
+                            context.Drugstores.Update(user);
+                            await context.SaveChangesAsync();
+                            return Ok(new MessageModel
+                            {
+                                Code = "MFAPI20017",
+                                Message = "Password updated successfully"
+                            });
+                        }
+                        else
+                        {
+                            return BadRequest(new MessageModel
+                            {
+                                Code = "MFAPI40012",
+                                Message = "New password cannot be the same as the old one"
+                            });
+                        }
+                    }
+                    else
+                    {
+                        return BadRequest(new MessageModel
+                        {
+                            Code = "MFAPI40013",
+                            Message = "Passwords are not the same"
                         });
                     }
                 }
                 else
                 {
-                    return BadRequest(new MessageModel
+                    return NotFound(new MessageModel
                     {
-                        Code = "MFAPI40011",
-                        Message = "Passwords are not the same"
+                        Code = "MFAPI40419",
+                        Message = "User not found"
                     });
                 }
             }

@@ -1,8 +1,7 @@
 ﻿const access = new URLSearchParams(window.location.search);  //Query string, buscando dados da URL
 const token = access.get('token');
-//console.log(token);
 
-let message = document.getElementById('#message');
+let message = document.querySelector('#message');
 let button = document.querySelector('#btnUpdate');
 let nPassword = document.querySelector('#inputPassword');
 let cPassword = document.querySelector('#inputConfirmPassword');
@@ -18,7 +17,7 @@ button.addEventListener('click', function (e) {
         confirmPassword: cPassword.value
     }
 
-    fetch('https://localhost:7122/v1/password/reset/client', {
+    fetch('https://localhost:7122/v1/password/reset/user', {
     method: 'PATCH',
     headers: {
         'Accept': 'application/json',
@@ -27,59 +26,28 @@ button.addEventListener('click', function (e) {
     body: JSON.stringify(
         data
     ),
-
 })
     .then((response) => {
         if (response.ok) {
-            console.log("Ok");
+            msn = '<div class="alert alert-success alert-dismissible fade show">'+
+                    '<button class="btn-close" data-bs-dismiss="alert"></button>'+
+                    'Senha atualizada com <strong>Sucesso</strong>'+
+                  '</div>';
+            message.insertAdjacentHTML('afterbegin', msn);
         }
         else {
-            console.log(response.json);
+            msn = '<div class="alert alert-danger alert-dismissible fade show">'+
+                    '<button class="btn-close" data-bs-dismiss="alert"></button>'+
+                    '<strong>Falha</strong> na atualização da senha'+
+                  '</div>';
+            message.insertAdjacentHTML('afterbegin', msn);
         }
     })
-    .catch(f => console.log("Erro", f))
-
-    console.log(data);
-
+    .catch(f => {
+        msn = '<div class="alert alert-danger alert-dismissible fade show">'+
+                    '<button class="btn-close" data-bs-dismiss="alert"></button>'+
+                    '<strong>Falha</strong> na atualização da senha'+
+                  '</div>';
+        message.insertAdjacentHTML('afterbegin', msn);
+    })
 }); 
-/*
-// Realizando requisição PATCH com o endpoint da API para redefinição de senha
-fetch( 'https://localhost:7122/v1/password/reset/client', {
-    method: 'PATCH',
-    headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json;charset=utf-8'
-    },
-    body: JSON.stringify( data )
-} )
-.then( function( response ){
-    if( response.status != 200 ){
-        this.fetchError = response.status;
-    }else{
-        response.json().then( function( data ){
-            this.fetchResponse = data;
-        }.bind(this));
-    }
-}.bind(this));
-
-
-fetch('https://localhost:7122/v1/password/reset/client', {
-    method: 'PATCH',
-    body: JSON.stringify(
-
-    ),
-    headers: {
-        'Content-type': 'application/json; charset=UTF-8',
-    },
-})
-    .then((response) => {
-        if (response.ok) {
-            console.log("Ok");
-        }
-        else {
-            console.log(response.json);
-        }
-    })
-    .catch(f => console.log("Erro", f))
-    */
-

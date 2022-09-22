@@ -32,7 +32,7 @@
                          "<h2 style='text-align:center; font-size:10pt'>Voce solicitou um servico para redefinicao de senha.</h2>" +
                          "<h2 style='text-align:center; font-size:10pt'>Clique no botao abaixo para adicionar a nova senha:</h2>" +
                          "<div style='text-align: center; margin: auto;'>" +
-                            "<a href='https://localhost:7122/passwordReset.html'>" +
+                            $"<a href='https://localhost:7122/passwordReset.html?token={token}'>" +
                                 "<button style='background: #fae900; border-radius: 20px; padding: 10px; cursor: pointer; font-weight: bold; color: #0399BA; border: none; font-size: 16px;'>" +
                                 "Redefinir Senha</button>" +
                             "</a>" + 

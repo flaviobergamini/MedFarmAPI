@@ -182,5 +182,142 @@ namespace MedFarmAPI.Controllers
             }
             
         }
+
+        [AllowAnonymous]
+        [HttpPost("forgot")]
+        public async Task<IActionResult> PostForgotPasswordAsync(
+            [FromBody] PasswordForgotRequest passwordForgotRequest,
+            [FromServices] TokenService tokenService,
+            [FromServices] EmailService emailService,
+            [FromServices] ViewBodyService viewBodyService,
+            [FromServices] DataContext context,
+            CancellationToken cancellationToken)
+        {
+            string email = passwordForgotRequest.Email;
+            Models.Client? client = await context.Clients.FirstOrDefaultAsync(x => x.Email == email, cancellationToken: cancellationToken);
+            Models.Doctor? doctor = await context.Doctors.FirstOrDefaultAsync(x => x.Email == email, cancellationToken: cancellationToken);
+            Models.Drugstore? drugstore = await context.Drugstores.FirstOrDefaultAsync(x => x.Email == email, cancellationToken: cancellationToken);
+
+            if(client != null)
+            {
+                var tokenClient = tokenService.GenerateClientToken(client);
+
+                try 
+                {
+                    var sendEmail = emailService.Send(
+                        client.Name,
+                        client.Email,
+                        "MedFarm - Redefinição de Senha",
+                        viewBodyService.BodyEmailPasswordReset(client.Name, tokenClient));
+
+                    if (sendEmail)
+                    {
+                        return Ok(new MessageModel
+                        {
+                            Code = "MFAPI200",
+                            Message = "Email successfully sent."
+                        });
+                    }
+                    else
+                    {
+                        return NotFound(new MessageModel
+                        {
+                            Code = "MFAPI404",
+                            Message = "Invalid email"
+                        });
+                    }
+                } catch {
+                    return StatusCode(500, new MessageModel
+                    {
+                        Code = "MFAPI500",
+                        Message = "Mail email error or invalid email"
+                    });
+                }
+            }
+            else if (doctor != null)
+            {
+                var tokenDoctor = tokenService.GenerateDoctorToken(doctor);
+
+                try
+                {
+                    var sendEmail = emailService.Send(
+                        doctor.Name,
+                        doctor.Email,
+                        "MedFarm - Redefinição de Senha",
+                        viewBodyService.BodyEmailPasswordReset(doctor.Name, tokenDoctor));
+
+                    if (sendEmail)
+                    {
+                        return Ok(new MessageModel
+                        {
+                            Code = "MFAPI200",
+                            Message = "Email successfully sent."
+                        });
+                    }
+                    else
+                    {
+                        return NotFound(new MessageModel
+                        {
+                            Code = "MFAPI404",
+                            Message = "Invalid email"
+                        });
+                    }
+                }
+                catch
+                {
+                    return StatusCode(500, new MessageModel
+                    {
+                        Code = "MFAPI500",
+                        Message = "Mail email error or invalid email"
+                    });
+                }
+            }
+            if (drugstore != null)
+            {
+                var tokenClient = tokenService.GenerateDrugstoreToken(drugstore);
+
+                try
+                {
+                    var sendEmail = emailService.Send(
+                        drugstore.Name,
+                        drugstore.Email,
+                        "MedFarm - Redefinição de Senha",
+                        viewBodyService.BodyEmailPasswordReset(drugstore.Name, tokenClient));
+
+                    if (sendEmail)
+                    {
+                        return Ok(new MessageModel
+                        {
+                            Code = "MFAPI200",
+                            Message = "Email successfully sent."
+                        });
+                    }
+                    else
+                    {
+                        return NotFound(new MessageModel
+                        {
+                            Code = "MFAPI404",
+                            Message = "Invalid email"
+                        });
+                    }
+                }
+                catch
+                {
+                    return StatusCode(500, new MessageModel
+                    {
+                        Code = "MFAPI500",
+                        Message = "Mail email error or invalid email"
+                    });
+                }
+            }
+            else
+            {
+                return NotFound(new MessageModel
+                {
+                    Code = "MFAPI404",
+                    Message = "Invalid email"
+                });
+            }
+        }
     }
 }

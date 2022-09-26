@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MedFarmAPI.Models.AppointmentDoctorRequest
+namespace MedFarmAPI.Request.AppointmentDoctorRequest
 {
     public class AppointmentConfirmedRequest
     {

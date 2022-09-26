@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MedFarmAPI.Models.ClientResquest
+namespace MedFarmAPI.Request.ClientResquest
 {
     public class ClientSearchRequest
     {

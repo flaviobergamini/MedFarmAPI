@@ -1,5 +1,5 @@
 ﻿using MedFarmAPI.Data;
-using MedFarmAPI.MessageResponseModel;
+using MedFarmAPI.Response;
 using MedFarmAPI.Models;
 using MedFarmAPI.Services;
 using MedFarmAPI.ValidateModels;
@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SecureIdentity.Password;
+using DocumentValidation;
 
 namespace MedFarmAPI.Controllers
 {
@@ -22,7 +23,8 @@ namespace MedFarmAPI.Controllers
             [FromServices] DataContext context,
             CancellationToken cancellationToken)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || !client.Cpf.ValidateCpf() || !client.Email.ValidateEmail() ||
+                !client.Phone.ValidatePhone() || !client.Cep.ValidateCep())
                 return BadRequest(new MessageModel 
                 {
                     Code = "MFAPI4001",
@@ -52,7 +54,7 @@ namespace MedFarmAPI.Controllers
                     model.Name,
                     model.Email,
                     "Bem vindo ao Med Farm!!!",
-                    viewBodyService.BodyEmailClient(model.Name)
+                    viewBodyService.BodyEmail(model.Name)
                     ); 
                
                 if (confirmEmail)
@@ -102,8 +104,9 @@ namespace MedFarmAPI.Controllers
             [FromServices] DataContext context,
             CancellationToken cancellationToken)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(new MessageModel
+            if (!ModelState.IsValid || !doctor.Cpf.ValidateCpf() || !doctor.Email.ValidateEmail() ||
+                !doctor.Phone.ValidatePhone() || !doctor.Cep.ValidateCep())
+                    return BadRequest(new MessageModel
                 {
                     Code = "MFAPI4002",
                     Message = "Invalid User"
@@ -135,7 +138,7 @@ namespace MedFarmAPI.Controllers
                     model.Name,
                     model.Email,
                     "Bem vindo ao Med Farm!!!",
-                    viewBodyService.BodyEmailDoctor(model.Name)
+                    viewBodyService.BodyEmail(model.Name)
                     );
 
                 if (confirmEmail)
@@ -185,7 +188,8 @@ namespace MedFarmAPI.Controllers
             [FromServices] DataContext context, 
             CancellationToken cancellationToken)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || !drugstore.Cnpj.ValidateCnpj() || !drugstore.Email.ValidateEmail() ||
+                !drugstore.Phone.ValidatePhone() || !drugstore.Cep.ValidateCep())
                 return BadRequest(new MessageModel
                 {
                     Code = "MFAPI4003",
@@ -215,7 +219,7 @@ namespace MedFarmAPI.Controllers
                     model.Name,
                     model.Email,
                     "Bem vindo ao Med Farm!!!",
-                    viewBodyService.BodyEmailDrugstore(model.Name)
+                    viewBodyService.BodyEmail(model.Name)
                     );
 
                 if (confirmEmail)

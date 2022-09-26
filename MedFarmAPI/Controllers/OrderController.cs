@@ -1,12 +1,13 @@
 ﻿using MedFarmAPI.Data;
-using MedFarmAPI.MessageResponseModel;
-using MedFarmAPI.MessageResponseModel.OrderDrugstoreResponse;
+using MedFarmAPI.Response;
+using MedFarmAPI.Response.OrderDrugstoreResponse;
 using MedFarmAPI.Models;
 using MedFarmAPI.Services;
 using MedFarmAPI.ValidateModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using DocumentValidation;
 
 namespace MedFarmAPI.Controllers
 {
@@ -51,7 +52,7 @@ namespace MedFarmAPI.Controllers
             CancellationToken cancellationToken
             )
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || !order.Cep.ValidateCep())
                 return BadRequest(new MessageModel
                 {
                     Code = "MFAPI4004",

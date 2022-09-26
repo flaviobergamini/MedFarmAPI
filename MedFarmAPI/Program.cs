@@ -8,6 +8,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddCors();
 
 ConfigureAuthentication(builder);
 ConfigureServices(builder);
@@ -21,6 +22,13 @@ LoadConfiguration(app);
 app.UseSwagger();
 app.UseSwaggerUI();
 //app.UseStaticFiles();    // Suporte para arquivos estáticos, HTML, CSS, JS, imagens...
+
+app.UseCors(c =>
+{
+    c.AllowAnyHeader();
+    c.AllowAnyMethod();
+    c.AllowAnyOrigin();
+});
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

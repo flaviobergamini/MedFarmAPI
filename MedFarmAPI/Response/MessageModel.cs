@@ -1,4 +1,4 @@
-﻿namespace MedFarmAPI.MessageResponseModel
+﻿namespace MedFarmAPI.Response
 {
     public class MessageModel
     {

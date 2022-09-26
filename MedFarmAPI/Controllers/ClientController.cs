@@ -1,7 +1,7 @@
 ﻿using MedFarmAPI.Data;
-using MedFarmAPI.MessageResponseModel;
-using MedFarmAPI.MessageResponseModel.ClientResponse;
-using MedFarmAPI.Models.ClientResquest;
+using MedFarmAPI.Response;
+using MedFarmAPI.Response.ClientResponse;
+using MedFarmAPI.Request.ClientResquest;
 using MedFarmAPI.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

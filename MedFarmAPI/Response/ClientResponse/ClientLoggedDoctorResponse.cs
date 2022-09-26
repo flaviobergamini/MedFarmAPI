@@ -1,6 +1,6 @@
-﻿using MedFarmAPI.MessageResponseModel.ClientResponse.Model;
+﻿using MedFarmAPI.Response.ClientResponse.Model;
 
-namespace MedFarmAPI.MessageResponseModel.ClientResponse
+namespace MedFarmAPI.Response.ClientResponse
 {
     public class ClientLoggedDoctorResponse : ClientLogged
     {

@@ -1,8 +1,8 @@
 ﻿using MedFarmAPI.Data;
-using MedFarmAPI.MessageResponseModel;
-using MedFarmAPI.MessageResponseModel.AppointmentDoctorResponse;
+using MedFarmAPI.Response;
+using MedFarmAPI.Response.AppointmentDoctorResponse;
 using MedFarmAPI.Models;
-using MedFarmAPI.Models.AppointmentDoctorRequest;
+using MedFarmAPI.Request.AppointmentDoctorRequest;
 using MedFarmAPI.ValidateModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

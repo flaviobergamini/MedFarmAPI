@@ -1,10 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace MedFarmAPI.MessageResponseModel.OrderDrugstoreResponse
+namespace MedFarmAPI.Response.AppointmentDoctorResponse
 {
-    public class OrderPendingResponse
+    public class AppointmentPendingResponse
     {
         [Required] public int Id { get; set; }
         [Required] public string Name { get; set; } = string.Empty;
+        [Required] public DateTime Date { get; set; }
     }
 }

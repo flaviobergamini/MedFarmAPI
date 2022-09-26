@@ -8,6 +8,7 @@ namespace MedFarmAPI.Services
 {
     public class TokenService
     {
+        private DecryptedTokenService decryptedTokenService = new DecryptedTokenService();
         public string GenerateClientToken(Client client)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -78,6 +79,17 @@ namespace MedFarmAPI.Services
             };
             var token = tokenHandler.CreateToken(tokenDescriptor);
             return tokenHandler.WriteToken(token);
+        }
+
+        public DecryptedTokenService ReadToken(string token)
+        {
+            var handler = new JwtSecurityTokenHandler();
+            var jwtSecurityToken = handler.ReadJwtToken(token);
+            decryptedTokenService.Id = int.Parse(jwtSecurityToken.Claims.First(claim => claim.Type == "id").Value);
+            decryptedTokenService.Name = jwtSecurityToken.Claims.First(claim => claim.Type == "name").Value;
+            decryptedTokenService.Email = jwtSecurityToken.Claims.First(claim => claim.Type == "email").Value;
+            decryptedTokenService.Role = jwtSecurityToken.Claims.First(claim => claim.Type == "role").Value;
+            return decryptedTokenService;
         }
     }
 }

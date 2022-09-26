@@ -17,7 +17,7 @@ button.addEventListener('click', function (e) {
         confirmPassword: cPassword.value
     }
 
-    fetch('https://localhost:7122/v1/password/reset/user', {
+    fetch('https://medfarmapi.azurewebsites.net/v1/password/reset/user', {
     method: 'PATCH',
     headers: {
         'Accept': 'application/json',

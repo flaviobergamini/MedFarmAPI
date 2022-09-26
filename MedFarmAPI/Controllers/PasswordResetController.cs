@@ -27,7 +27,7 @@ namespace MedFarmAPI.Controllers
             if (!ModelState.IsValid)
                 return BadRequest(new MessageModel
                 {
-                    Code = "MFAPI40012",
+                    Code = "MFAPI40010",
                     Message = "Invalid User"
                 });
 
@@ -63,7 +63,7 @@ namespace MedFarmAPI.Controllers
                         {
                             return BadRequest(new MessageModel
                             {
-                                Code = "MFAPI40010",
+                                Code = "MFAPI40011",
                                 Message = "New password cannot be the same as the old one"
                             });
                         }
@@ -72,7 +72,7 @@ namespace MedFarmAPI.Controllers
                     {
                         return BadRequest(new MessageModel
                         {
-                            Code = "MFAPI40011",
+                            Code = "MFAPI40012",
                             Message = "Passwords are not the same"
                         });
                     }
@@ -106,7 +106,7 @@ namespace MedFarmAPI.Controllers
                         {
                             return BadRequest(new MessageModel
                             {
-                                Code = "MFAPI40011",
+                                Code = "MFAPI40013",
                                 Message = "New password cannot be the same as the old one"
                             });
                         }
@@ -115,7 +115,7 @@ namespace MedFarmAPI.Controllers
                     {
                         return BadRequest(new MessageModel
                         {
-                            Code = "MFAPI40012",
+                            Code = "MFAPI40014",
                             Message = "Passwords are not the same"
                         });
                     }
@@ -149,7 +149,7 @@ namespace MedFarmAPI.Controllers
                         {
                             return BadRequest(new MessageModel
                             {
-                                Code = "MFAPI40012",
+                                Code = "MFAPI40015",
                                 Message = "New password cannot be the same as the old one"
                             });
                         }
@@ -158,7 +158,7 @@ namespace MedFarmAPI.Controllers
                     {
                         return BadRequest(new MessageModel
                         {
-                            Code = "MFAPI40013",
+                            Code = "MFAPI40016",
                             Message = "Passwords are not the same"
                         });
                     }
@@ -214,7 +214,7 @@ namespace MedFarmAPI.Controllers
                     {
                         return Ok(new MessageModel
                         {
-                            Code = "MFAPI200",
+                            Code = "MFAPI20018",
                             Message = "Email successfully sent."
                         });
                     }
@@ -222,7 +222,7 @@ namespace MedFarmAPI.Controllers
                     {
                         return NotFound(new MessageModel
                         {
-                            Code = "MFAPI404",
+                            Code = "MFAPI40420",
                             Message = "Invalid email"
                         });
                     }
@@ -250,7 +250,7 @@ namespace MedFarmAPI.Controllers
                     {
                         return Ok(new MessageModel
                         {
-                            Code = "MFAPI200",
+                            Code = "MFAPI20019",
                             Message = "Email successfully sent."
                         });
                     }
@@ -258,7 +258,7 @@ namespace MedFarmAPI.Controllers
                     {
                         return NotFound(new MessageModel
                         {
-                            Code = "MFAPI404",
+                            Code = "MFAPI40421",
                             Message = "Invalid email"
                         });
                     }
@@ -288,7 +288,7 @@ namespace MedFarmAPI.Controllers
                     {
                         return Ok(new MessageModel
                         {
-                            Code = "MFAPI200",
+                            Code = "MFAPI20020",
                             Message = "Email successfully sent."
                         });
                     }
@@ -296,7 +296,7 @@ namespace MedFarmAPI.Controllers
                     {
                         return NotFound(new MessageModel
                         {
-                            Code = "MFAPI404",
+                            Code = "MFAPI40422",
                             Message = "Invalid email"
                         });
                     }
@@ -314,7 +314,7 @@ namespace MedFarmAPI.Controllers
             {
                 return NotFound(new MessageModel
                 {
-                    Code = "MFAPI404",
+                    Code = "MFAPI40423",
                     Message = "Invalid email"
                 });
             }

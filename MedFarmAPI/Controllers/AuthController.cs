@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SecureIdentity.Password;
+using DocumentValidation;
 
 namespace MedFarmAPI.Controllers
 {
@@ -22,7 +23,8 @@ namespace MedFarmAPI.Controllers
             [FromServices] DataContext context,
             CancellationToken cancellationToken)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || !client.Cpf.ValidateCpf() || !client.Email.ValidateEmail() ||
+                !client.Phone.ValidatePhone() || !client.Cep.ValidateCep())
                 return BadRequest(new MessageModel 
                 {
                     Code = "MFAPI4001",
@@ -102,8 +104,9 @@ namespace MedFarmAPI.Controllers
             [FromServices] DataContext context,
             CancellationToken cancellationToken)
         {
-            if (!ModelState.IsValid)
-                return BadRequest(new MessageModel
+            if (!ModelState.IsValid || !doctor.Cpf.ValidateCpf() || !doctor.Email.ValidateEmail() ||
+                !doctor.Phone.ValidatePhone() || !doctor.Cep.ValidateCep())
+                    return BadRequest(new MessageModel
                 {
                     Code = "MFAPI4002",
                     Message = "Invalid User"
@@ -185,7 +188,8 @@ namespace MedFarmAPI.Controllers
             [FromServices] DataContext context, 
             CancellationToken cancellationToken)
         {
-            if (!ModelState.IsValid)
+            if (!ModelState.IsValid || !drugstore.Cnpj.ValidateCnpj() || !drugstore.Email.ValidateEmail() ||
+                !drugstore.Phone.ValidatePhone() || !drugstore.Cep.ValidateCep())
                 return BadRequest(new MessageModel
                 {
                     Code = "MFAPI4003",

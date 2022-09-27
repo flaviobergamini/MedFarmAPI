@@ -49,6 +49,8 @@ void LoadConfiguration(WebApplication app)
 {
     Configuration.JwtKey = app.Configuration.GetValue<string>("JwtKey");
 
+    Configuration.ConnectionStringDatabase = app.Configuration.GetValue<string>("ConnectionStringDatabase");
+
     var smtp = new Configuration.SmtpConfiguration();
     app.Configuration.GetSection("Smtp").Bind(smtp);
     Configuration.Smtp = smtp;

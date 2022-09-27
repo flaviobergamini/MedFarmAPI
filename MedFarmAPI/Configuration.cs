@@ -6,6 +6,7 @@
         public static string JwtKey { get; set; } = "NzQ5MjhlMTUtYjkwOS00M2MzLWIyYmUtMzM3NmVjNjY4YWFh";
         public static SmtpConfiguration Smtp = new();
         public static FirebaseConfiguration Firebase = new();
+        public static string? ConnectionStringDatabase { get; set; }
 
         public class SmtpConfiguration
         {

@@ -13,7 +13,7 @@ namespace MedFarmAPI.Data{
 
         protected override void OnConfiguring(DbContextOptionsBuilder options)
         {
-            options.UseSqlServer(Configuration.ConnectionStringDatabase);
+            options.UseSqlServer("");
             //options.LogTo(Console.WriteLine);
         }
 

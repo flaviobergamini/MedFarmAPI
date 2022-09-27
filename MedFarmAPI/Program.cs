@@ -43,13 +43,16 @@ app.MapRazorPages();
 
 app.Run();
 
-
 // buscando credenciais para JWT, serviço de e-mail e storage no Firebase
 void LoadConfiguration(WebApplication app)
 {
     Configuration.JwtKey = app.Configuration.GetValue<string>("JwtKey");
 
-    Configuration.ConnectionStringDatabase = app.Configuration.GetValue<string>("ConnectionStringDatabase");
+    //Configuration.ConnectionStringDatabase = app.Configuration.GetValue<string>("ConnectionStringDatabase");
+
+    var utility = new Configuration.UtilitiesConfiguration();
+    app.Configuration.GetSection("Utilities").Bind(utility);
+    Configuration.Utility = utility;
 
     var smtp = new Configuration.SmtpConfiguration();
     app.Configuration.GetSection("Smtp").Bind(smtp);

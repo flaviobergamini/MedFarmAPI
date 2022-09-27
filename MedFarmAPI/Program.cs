@@ -47,6 +47,9 @@ app.Run();
 // buscando credenciais para JWT, serviço de e-mail e storage no Firebase
 void LoadConfiguration(WebApplication app)
 {
+    var connectionStrings = app.Configuration.GetConnectionString("DefaultConnection");
+    Configuration.ConnectionStrings = connectionStrings;
+
     Configuration.JwtKey = app.Configuration.GetValue<string>("JwtKey");
 
     var smtp = new Configuration.SmtpConfiguration();

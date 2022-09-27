@@ -3,9 +3,10 @@
     public static class Configuration
     {
         //Usando GUID e encriptado em base64
-        public static string JwtKey { get; set; } = "NzQ5MjhlMTUtYjkwOS00M2MzLWIyYmUtMzM3NmVjNjY4YWFh";
+        public static string JwtKey { get; set; } = null!;
         public static SmtpConfiguration Smtp = new();
         public static FirebaseConfiguration Firebase = new();
+        public static string ConnectionStrings { get; set; } = null!;
 
         public class SmtpConfiguration
         {

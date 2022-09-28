@@ -91,7 +91,7 @@ namespace MedFarmAPI.Controllers
                 return StatusCode(500, new MessageModel
                 {
                     Code = "MFAPI5002",
-                    Message = "Internal server error when registering user"
+                    Message = "Internal server error when registering user: " + ex.Message
                 }) ;
             }
         }

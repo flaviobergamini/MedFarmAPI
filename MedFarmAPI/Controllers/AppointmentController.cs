@@ -86,12 +86,9 @@ namespace MedFarmAPI.Controllers
         {
             try
             {
-                var appointments = await (from a in context.Appointments
-                                  join d in context.Doctors on a.Doctor.Id equals d.Id
-                                  where
-                                    d.Id == id &&
-                                    a.Confirmed == true
-                                  select a).AsNoTracking().ToListAsync(cancellationToken);
+                var appointments = await context.Appointments.AsNoTracking()
+                    .Include(x => x.Doctor)
+                    .Where(x => x.Doctor.Id == id && x.Confirmed == true).ToListAsync();
 
 
                 List<string> dayTime = new List<string>();
@@ -251,11 +248,11 @@ namespace MedFarmAPI.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new MessageModel
+                return StatusCode(500, ex.Message);/*new MessageModel
                 {
                     Code = "MFAPI5000",
                     Message = "Internal server error when saving query"
-                });
+                }); */
             }
         }
 

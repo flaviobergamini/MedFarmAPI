@@ -3,7 +3,6 @@ using MedFarmAPI.Response;
 using MedFarmAPI.Models;
 using MedFarmAPI.Services;
 using MedFarmAPI.ValidateModels;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SecureIdentity.Password;

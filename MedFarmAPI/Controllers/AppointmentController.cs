@@ -86,9 +86,13 @@ namespace MedFarmAPI.Controllers
         {
             try
             {
-                var appointments = await (from ap in context.Appointments.Include(a => a.Doctor).Include(b => b.Client)
-                                          where ap.Confirmed == true && ap.Doctor.Id == id
-                                          select ap).ToListAsync();
+                var appointments = await (from a in context.Appointments
+                                  join d in context.Doctors on a.Doctor.Id equals d.Id
+                                  where
+                                    d.Id == id &&
+                                    a.Confirmed == true
+                                  select a).AsNoTracking().ToListAsync(cancellationToken);
+
 
                 List<string> dayTime = new List<string>();
                 List<string> dateWeek = new List<string>();
@@ -104,8 +108,7 @@ namespace MedFarmAPI.Controllers
                 int year = int.Parse(dateTimeBrazil.Substring(6, 4));
                 int hour = int.Parse(dateTimeBrazil.Substring(11, 2));
 
-                DateTime lastDay = new DateTime(year, month, DateTime.DaysInMonth(year, month));
-                    
+                DateTime lastDay = new DateTime(year, month, DateTime.DaysInMonth(year, month));  
                 DateTime dateTime = new DateTime(year, month, day);
                 DateTime dateTimeVerify;
 
@@ -116,6 +119,7 @@ namespace MedFarmAPI.Controllers
                 if (numberDay > Sunday && numberDay < Saturday)
                 {
                     dayAccount = 0;
+
                     for (var i = Monday; i < Saturday; i++)
                     {
                         try

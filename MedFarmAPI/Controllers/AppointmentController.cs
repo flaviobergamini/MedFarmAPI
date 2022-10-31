@@ -101,12 +101,12 @@ namespace MedFarmAPI.Controllers
                 var dateTimeBrazil = String.Format(TimeZoneInfo.ConvertTimeFromUtc(dateTimeUtc, brasilia).ToString());
 
                 int day = int.Parse(dateTimeBrazil.Substring(0, 2));
-                int month = int.Parse(dateTimeBrazil.Substring(3, 2));
+                int MES = int.Parse(dateTimeBrazil.Substring(3, 2));
                 int year = int.Parse(dateTimeBrazil.Substring(6, 4));
                 int hour = int.Parse(dateTimeBrazil.Substring(11, 2));
 
-                DateTime lastDay = new DateTime(year, month, DateTime.DaysInMonth(year, month));  
-                DateTime dateTime = new DateTime(year, month, day);
+                DateTime lastDay = new DateTime(year, MES, DateTime.DaysInMonth(year, MES));  
+                DateTime dateTime = new DateTime(year, MES, day);
                 DateTime dateTimeVerify;
 
                 int numberDay = (int)dateTime.DayOfWeek;
@@ -121,25 +121,25 @@ namespace MedFarmAPI.Controllers
                     {
                         try
                         {
-                            dateTimeVerify = new DateTime(year, month, day+dayAccount);
+                            dateTimeVerify = new DateTime(year, MES, day+dayAccount);
                             dayVerify = (int)dateTimeVerify.DayOfWeek;
                             if (dayVerify > Sunday && dayVerify < Saturday)
                             {
-                                if (month < 10)
+                                if (MES < 10)
                                     if (day < 10)
-                                        dateString = $"0{day+dayAccount}/0{month}/{year}";
+                                        dateString = $"0{day+dayAccount}/0{MES}/{year}";
                                     else
-                                        dateString = $"{day+dayAccount}/0{month}/{year}";
+                                        dateString = $"{day+dayAccount}/0{MES}/{year}";
                                 else
                                     if (day < 10)
-                                    dateString = $"0{day+dayAccount}/{month}/{year}";
+                                    dateString = $"0{day+dayAccount}/{MES}/{year}";
                                 else
-                                    dateString = $"{day+dayAccount}/{month}/{year}";
+                                    dateString = $"{day+dayAccount}/{MES}/{year}";
                                 dateWeek.Add(dateString);
                                 if (day+dayAccount == lastDay.Day)
                                 {
                                     day = 0;
-                                    month = month + 1;
+                                    MES = MES + 1;
                                     dayAccount = Sunday;
                                 }
                                 dayAccount++;
@@ -149,25 +149,25 @@ namespace MedFarmAPI.Controllers
                         {
                             dayAccount = 1;
                             
-                            dateTimeVerify = new DateTime(year, month, day+dayAccount);
+                            dateTimeVerify = new DateTime(year, MES, day+dayAccount);
                             dayVerify = (int)dateTimeVerify.DayOfWeek;
                             if (dayVerify > Sunday && dayVerify < Saturday)
                             {
-                                if (month < 10)
+                                if (MES < 10)
                                     if (day < 10)
-                                        dateString = $"0{day+dayAccount}/0{month}/{year}";
+                                        dateString = $"0{day+dayAccount}/0{MES}/{year}";
                                     else
-                                        dateString = $"{day+dayAccount}/0{month}/{year}";
+                                        dateString = $"{day+dayAccount}/0{MES}/{year}";
                                 else
                                     if (day < 10)
-                                    dateString = $"0{day+dayAccount}/{month}/{year}";
+                                    dateString = $"0{day+dayAccount}/{MES}/{year}";
                                 else
-                                    dateString = $"{day+dayAccount}/{month}/{year}";
+                                    dateString = $"{day+dayAccount}/{MES}/{year}";
                                 dateWeek.Add(dateString);
                                 if (day+dayAccount == lastDay.Day)
                                 {
                                     day = 0;
-                                    month = month + 1;
+                                    MES = MES + 1;
                                     dayAccount = Sunday;
                                 }
                                 dayAccount++;
@@ -180,23 +180,23 @@ namespace MedFarmAPI.Controllers
                     dayAccount = Monday;
                     for (var i = Monday; i < Saturday; i++)
                     {
-                        dateTimeVerify = new DateTime(year, month, day+dayAccount);
+                        dateTimeVerify = new DateTime(year, MES, day+dayAccount);
                         dayVerify = (int)dateTimeVerify.DayOfWeek;
-                        if (month < 10)
+                        if (MES < 10)
                             if (day < 10)
-                                dateString = $"0{day+dayAccount}/0{month}/{year}";
+                                dateString = $"0{day+dayAccount}/0{MES}/{year}";
                             else
-                                dateString = $"{day+dayAccount}/0{month}/{year}";
+                                dateString = $"{day+dayAccount}/0{MES}/{year}";
                         else
                             if (day < 10)
-                            dateString = $"0{day+dayAccount}/{month}/{year}";
+                            dateString = $"0{day+dayAccount}/{MES}/{year}";
                         else
-                            dateString = $"{day+dayAccount}/{month}/{year}";
+                            dateString = $"{day+dayAccount}/{MES}/{year}";
                         dateWeek.Add(dateString);
                         if (day+dayAccount == lastDay.Day)
                         {
                             day = 0;
-                            month = month + 1;
+                            MES = MES + 1;
                             dayAccount = Sunday;
                         }
                         dayAccount++;

@@ -101,10 +101,10 @@ namespace MedFarmAPI.Controllers
                 DateTime dateTimeLocal = TimeZoneInfo.ConvertTimeFromUtc(DateTime.UtcNow, brasilia);
                 var dateTimeBrazil = String.Format(TimeZoneInfo.ConvertTimeFromUtc(dateTimeUtc, brasilia).ToString());
 
-                int day = dateTimeLocal.Day; //int.Parse(dateTimeBrazil.Substring(0, 2));
-                int month = dateTimeLocal.Month; //int.Parse(dateTimeBrazil.Substring(3, 2));
-                int year = dateTimeLocal.Year; //int.Parse(dateTimeBrazil.Substring(6, 4));
-                int hour = dateTimeLocal.Hour; //int.Parse(dateTimeBrazil.Substring(11, 2));
+                int day = dateTimeLocal.Day;
+                int month = dateTimeLocal.Month; 
+                int year = dateTimeLocal.Year; 
+                int hour = dateTimeLocal.Hour; 
 
                 DateTime lastDay = new DateTime(year, month, DateTime.DaysInMonth(year, month));  
                 DateTime dateTime = new DateTime(year, month, day);

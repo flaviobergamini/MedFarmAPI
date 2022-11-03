@@ -226,6 +226,7 @@ namespace MedFarmAPI.Controllers
             {
                 var appointments = await context.Appointments
                     .Include(x => x.Client)
+                    .Include(x => x.Doctor)
                     .AsNoTracking()
                     .Where(x => x.Client.Id == id && x.Confirmed == true)
                     .ToListAsync();
@@ -258,6 +259,7 @@ namespace MedFarmAPI.Controllers
             {
                 var orders = await context.Orders
                     .Include(x => x.Client)
+                    .Include(x => x.Drugstores)
                     .AsNoTracking()
                     .Where(x => x.Client.Id == id && x.Confirmed == true)
                     .ToListAsync();

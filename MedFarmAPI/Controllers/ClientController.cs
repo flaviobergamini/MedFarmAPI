@@ -46,12 +46,12 @@ namespace MedFarmAPI.Controllers
                     });
 
                 var appointments = await (from ap in context.Appointments.Include(a => a.Doctor).Include(b => b.Client)
-                                    where ap.Client.Id == clients.Id || ap.Client.RefreshToken == clients.RefreshToken
-                                    select ap).ToListAsync();
+                                          where ap.Client.Id == clients.Id || ap.Client.RefreshToken == clients.RefreshToken
+                                          select ap).ToListAsync();
 
                 var orders = await (from order in context.Orders.Include(a => a.Drugstores).Include(b => b.Client)
-                              where order.Client.Id == clients.Id || order.Client.RefreshToken == clients.RefreshToken
-                              select order).ToListAsync();
+                                    where order.Client.Id == clients.Id || order.Client.RefreshToken == clients.RefreshToken
+                                    select order).ToListAsync();
 
                 ClientLoggedDoctorResponse doctorResponse;
                 ClientLoggedOrderResponse orderResponse;
@@ -211,6 +211,70 @@ namespace MedFarmAPI.Controllers
                         City = drugstore.City,
                         StreetNumber = drugstore.StreetNumber
                     }
+                });
+            }
+        }
+
+        [Authorize(Roles = "Client")]
+        [HttpGet("{id:int}/Appointments")]
+        public async Task<IActionResult> ListAppointments(
+            [FromServices] DataContext context,
+            [FromRoute] int id
+            )
+        {
+            try
+            {
+                var appointments = await context.Appointments
+                    .Include(x => x.Client)
+                    .AsNoTracking()
+                    .Where(x => x.Client.Id == id && x.Confirmed == true)
+                    .ToListAsync();
+
+                return Ok(new
+                {
+                    Code = "MFAPI20020",
+                    Appointments = appointments
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new MessageModel
+                {
+                    Code = "MFAPI50030",
+                    Message = "Internal server error when search appointment"
+                });
+            }
+        }
+
+        [Authorize(Roles = "Client")]
+        [HttpGet("{id:int}/Orders")]
+        public async Task<IActionResult> ListOrders(
+            [FromServices] DataContext context,
+            [FromRoute] int id
+            )
+        {
+            try
+            {
+                var orders = await context.Orders
+                    .Include(x => x.Client)
+                    .AsNoTracking()
+                    .Where(x => x.Client.Id == id && x.Confirmed == true)
+                    .ToListAsync();
+
+                return Ok(new
+                {
+                    Code = "MFAPI20021",
+                    Orders = orders
+                });
+
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new MessageModel
+                {
+                    Code = "MFAPI50031",
+                    Message = "Internal server error when search appointment"
                 });
             }
         }

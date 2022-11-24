@@ -386,5 +386,43 @@ namespace MedFarmAPI.Controllers
                 });
             }
         }
+
+        [Authorize(Roles = "Doctor")]
+        [Authorize(Roles = "Drugstore")]
+        [HttpGet("doctor/client/{id:int}")]
+        [HttpGet("drugstore/client/{id:int}")]
+        public async Task<IActionResult> GetClientByIdAsync(
+        [FromServices] DataContext context,
+        [FromRoute] int id,
+        CancellationToken cancellationToken)
+        {
+            try
+            {
+                var client = await context.Clients.FirstOrDefaultAsync(x => x.Id == id);
+
+                if (client == null)
+                {
+                    return NotFound(new MessageModel
+                    {
+                        Code = "MFAPI40414",
+                        Message = "Client not found in Database, Invalid ID"
+                    });
+                }
+
+                return Ok(new
+                {
+                    Code = "MFAPI50017",
+                    Client = client,
+                });
+            }
+            catch
+            {
+                return StatusCode(500, new MessageModel
+                {
+                    Code = "MFAPI50014",
+                    Message = "Internal server error when fetching a appointment"
+                });
+            }
+        }
     }
 }

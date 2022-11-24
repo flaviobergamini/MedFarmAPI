@@ -21,7 +21,7 @@ LoadConfiguration(app);
 // Configure the HTTP request pipeline.
 app.UseSwagger();
 app.UseSwaggerUI();
-//app.UseStaticFiles();    // Suporte para arquivos estáticos, HTML, CSS, JS, imagens...
+app.UseStaticFiles();    // Suporte para arquivos estáticos, HTML, CSS, JS, imagens...
 
 app.UseCors(c =>
 {

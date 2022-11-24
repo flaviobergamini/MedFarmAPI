@@ -330,6 +330,7 @@ namespace MedFarmAPI.Controllers
                 {
                     appointmentPendingResponse = new AppointmentPendingResponse();
                     appointmentPendingResponse.Id = appointment.Id;
+                    appointmentPendingResponse.UserId = appointment.Client.Id;
                     appointmentPendingResponse.Name = appointment.Client.Name;
                     appointmentPendingResponse.Date = appointment.DateTimeAppointment;
                     listAppointments.Add(appointmentPendingResponse);

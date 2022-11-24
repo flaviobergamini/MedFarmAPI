@@ -7,6 +7,7 @@ using MedFarmAPI.ValidateModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using MedFarmAPI.Response.ClientResponse;
 
 namespace MedFarmAPI.Controllers
 {
@@ -409,10 +410,26 @@ namespace MedFarmAPI.Controllers
                     });
                 }
 
+                var clientResponse = new ClientModel 
+                { 
+                    Id = client.Id,
+                    Name = client.Name,
+                    Email = client.Email,
+                    Phone = client.Phone,
+                    Cpf = client.Cpf,
+                    State = client.State,
+                    City = client.City,
+                    Complement = client.Complement,
+                    District = client.District,
+                    Cep = client.Cep,
+                    Street = client.Street,
+                    StreetNumber = client.StreetNumber,
+                };
+
                 return Ok(new
                 {
                     Code = "MFAPI50017",
-                    Client = client,
+                    Client = clientResponse,
                 });
             }
             catch

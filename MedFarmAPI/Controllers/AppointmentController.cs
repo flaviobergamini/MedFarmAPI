@@ -389,9 +389,7 @@ namespace MedFarmAPI.Controllers
         }
 
         [Authorize(Roles = "Doctor")]
-        [Authorize(Roles = "Drugstore")]
         [HttpGet("doctor/client/{id:int}")]
-        [HttpGet("drugstore/client/{id:int}")]
         public async Task<IActionResult> GetClientByIdAsync(
         [FromServices] DataContext context,
         [FromRoute] int id,
